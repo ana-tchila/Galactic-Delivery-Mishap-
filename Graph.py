@@ -37,6 +37,13 @@ class Graph:
 		It does this by adding to_location to the connections of the from_location"""
 		self.locations[location.name].connections[location.name] = to_location 
 
+	def find_location(self, location_n) 
+		""" Method to find the location in the dictionary""" 
+		if location_n in self.locations: 
+			return self.location[location_n.name]
+		else: 
+			return None 
+
 #Implementation of the Graph 
 galaxy = Graph()
 
