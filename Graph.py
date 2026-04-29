@@ -15,18 +15,22 @@ class Location:
         self.connections = {} #Dictionary to hold the connections (edges) 
         self.choices = [] #List of choices at the location 
 
-#Graph that the user will be moving through 
+#Graph that the user will be traversing 
 
 class Graph: 
 	""" Class graph to represent the map of locations(nodes) and their connections(edges) in the game. 
 	It will have methods to add locations, and connections.""" 
 	def __init__(self): 
-		self.locations = {} #dictionary to hold nodes
+		self.locations = {} #dictionary to hold the locations 
 
 	def add_location(self, location): 
 		"""Method to add a location node to the graph. 
-		It takes a location object and adds it to the self.locations dictionary with the location's name as the key."""
-		self.locations[location.name] = location # 
+		It takes a location object and checks if is is in the self.locations dictionary. 
+		If it doesn't exist location is added to the library"""
+		if location.name not in self.locations: # Checks if location is in the library 
+			self.locations[location.name] = location # Adds location in the library 
+		else: 
+			return none # Returns none 
 
 	def add_connection(self, from_location, to_location): 
 		""" Method to add a connection(edge) between two locations on the graph.
