@@ -7,8 +7,10 @@
 #Class Location (code for the nodes) 
 
 class Location: 
-	""" Class that will represent each location in the game. 
-	Each location has a name, description, connections to other locations, and actions that can be taken at the location."""
+	"""Represents each location in the game. 
+	
+	Stores name, description, connections to other locations, 
+	and available actions."""
 	def __init__(self, name: str, description:str): 
         self.name = name 
         self.description = description
@@ -18,31 +20,43 @@ class Location:
 #Graph that the user will be traversing 
 
 class Graph: 
-	""" Class graph to represent the map of locations(nodes) and their connections(edges) in the game. 
-	It will have methods to add locations, and connections.""" 
+	"""Graph of locations connected by directed or undirected edges.  
+	
+	Stores location objects indexed by name and has 
+	methods to add locations, create connections, and find the locations""" 
 	def __init__(self): 
 		self.locations = {} #dictionary to hold the locations 
 
 	def add_location(self, location): 
-		"""Method to add a location node to the graph. 
-		It takes a location object and checks if is is in the self.locations dictionary. 
-		If it doesn't exist location is added to the library"""
-		if location.name not in self.locations: # Checks if location is in the library 
-			self.locations[location.name] = location # Adds location in the library 
+		"""Adds a location node.
+		
+		It takes a location object, checks it in the self.locations dictionary. 
+		If it is nonexistent location is added"""
+		if location.name not in self.locations: # Checks location in the library 
+			self.locations[location.name] = location # Adds location to the library 
 		else: 
 			return none # Returns none 
 
-	def add_connection(self, from_location, to_location): 
-		""" Method to add a connection(edge) between two locations on the graph.
-		It does this by adding to_location to the connections of the from_location"""
-		self.locations[location.name].connections[location.name] = to_location 
+	def add_connection(self, from_location, to_location, two_way = True): 
+		"""Adds a connection (edge) between two locations. 
+		
+		It adds to_location to the connections of the from_location
+		If two_way = True then connection is undirected."""
+
+		if from_location not in self.locations or to_locations not in self.location: #Checks library 
+			return None 
+		self.location[from_location.name].connections[to_location.name] = to_location # Adds connection 
+		if two_way: 
+			self.location[to_location.name].connection[from_location.name] = from_location #Makes connection undirected 
 
 	def find_location(self, location_n) 
-		""" Method to find the location in the dictionary""" 
-		if location_n in self.locations: 
-			return self.location[location_n.name]
+		"""Finds the location in the dictionary
+		
+		Checks self.locations and returns the object""" 
+		if location_n in self.locations: # Checks location in the library 
+			return self.locations[location_n] # Returns the location object 
 		else: 
-			return None 
+			return None # Returns None  
 
 #Implementation of the Graph 
 galaxy = Graph()
@@ -53,7 +67,8 @@ garage = Location( 'Garage', 'Shell plc gas station, where people can recharge t
 diner = Location( 'Diner', 'A Diner that offers more food: community') 
 shop = Location( 'Antique Shop', 'Every item has its use - find what is useful for you') 
 parade = Location( 'Alien Parade', 'Fun like you have never experienced before, join the alien king on his ship')
-destination = Location('Roupell Street SE1', 'House of Brad Cooper') 
+destination = Location( 'Roupell Street SE1', 'House of Brad Cooper') 
+Celebration = Location( 'Celebration', 'You made it to Brad Copper on time. Time for a promotion and well deserved party') 
 
 #Adding Nodes to the Graph 
 galaxy.add_location(starting) 
@@ -64,7 +79,7 @@ galaxy.add_location(parade)
 galaxy.add_location(destination) 
 
 #Creating the edges 
-galaxy.add_connection(starting, garage) 
+galaxy.add_connection(starting, garage, False) 
 galaxy.add_connection(starting, diner) 
 galaxy.add_connection(garage, diner) 
 galaxy.add_connection(diner, shop) 
@@ -72,6 +87,8 @@ galaxy.add_connection(diner, parade)
 galaxy.add_connection(shop, garage) 
 galaxy.add_connection(parade, destination) 
 galaxy.add_connection(garage, destination) 
+galaxy.add_connection(start, celebration) 
+galaxy.add_connection(shop, celebration) 
 
 ###5740479 
 
