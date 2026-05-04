@@ -2,7 +2,7 @@
 # This function performs a linear search on the unordered list to find if the player has the item in their inventory. It returns the index of the item if found, otherwise it returns None.
 def search(unordered_list, item):
     """
-    preform a linear on an ordered list.
+    preform a linear on an unordered list.
     
     Args:
         unordered_list: a list of items in the player's inventory.
