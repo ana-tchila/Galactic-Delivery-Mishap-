@@ -67,9 +67,9 @@ garage = Location( 'Garage', 'Shell plc gas station, where people can recharge t
 diner = Location( 'Diner', 'A Diner that offers more food: community') 
 shop = Location( 'Antique Shop', 'Every item has its use - find what is useful for you') 
 ##5752030
-shopkeeper = location( "shoopkeeper", "Welcome to my humble shop, starngar!", "You can find things from all around the universe here!")
-gps = location( "GPS", "Is this what you are looking for?", "Luckily, some guy sold me his old bike scraps, and this is one of the parts which are in good condition", "It looks rusty and old, but I assure you, it works like it is brand new!")
-raygun = location( "Raygun", "A buddy from your planet with a funny accent called Richtofen sold me this weapon", "He told me it is one of his best creations or something....", "Yeah, it looks as weird as him")
+##shopkeeper = location( "shoopkeeper", "Welcome to my humble shop, starngar!", "You can find things from all around the universe here!")
+##gps = location( "GPS", "Is this what you are looking for?", "Luckily, some guy sold me his old bike scraps, and this is one of the parts which are in good condition", "It looks rusty and old, but I assure you, it works like it is brand new!")
+##raygun = location( "Raygun", "A buddy from your planet with a funny accent called Richtofen sold me this weapon", "He told me it is one of his best creations or something....", "Yeah, it looks as weird as him")
 #5752030
 parade = Location( 'Alien Parade', 'Fun like you have never experienced before, join the alien king on his ship')
 destination = Location( 'Roupell Street SE1', 'House of Brad Cooper') 
@@ -92,9 +92,9 @@ galaxy.add_connection(starting, diner)
 galaxy.add_connection(garage, diner) 
 galaxy.add_connection(diner, shop) 
 ###5752030
-galaxy.add_connection(shop, shopkeeper)
-galaxy.add_connection(shop, gps)
-galaxy.add_connection(shop, raygun)
+##galaxy.add_connection(shop, shopkeeper)
+##galaxy.add_connection(shop, gps)
+##galaxy.add_connection(shop, raygun)
 ##5752030
 galaxy.add_connection(diner, parade) 
 galaxy.add_connection(shop, garage) 
