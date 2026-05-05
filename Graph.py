@@ -17,6 +17,10 @@ class Location:
         self.connections = {} #Dictionary to hold the connections (edges) 
         self.choices = [] #List of choices at the location 
 
+	def add_choice(self, choice): 
+		"""Method to add choices to the location's chocie list """
+		self.choices.append(choice) #appends the list of choices 
+		
 #Graph that the user will be traversing 
 
 class Graph: 
@@ -80,14 +84,15 @@ galaxy.add_location(starting)
 galaxy.add_location(garage) 
 galaxy.add_location(diner) 
 galaxy.add_location(shop) 
-galaxy.add_location(shopkeeper)
-galaxy.add_location(gps)
-galaxy.add_location(raygun)
+#galaxy.add_location(shopkeeper)
+#galaxy.add_location(gps)
+#galaxy.add_location(raygun)
 galaxy.add_location(parade) 
 galaxy.add_location(destination) 
+galaxy.add_location(celebration) 
 
 #Creating the edges 
-galaxy.add_connection(starting, garage, False) 
+galaxy.add_connection(starting, garage, False) #One way connection only 
 galaxy.add_connection(starting, diner) 
 galaxy.add_connection(garage, diner) 
 galaxy.add_connection(diner, shop) 
@@ -104,6 +109,39 @@ galaxy.add_connection(start, celebration)
 galaxy.add_connection(shop, celebration) 
 
 ###5740479 
+
+#User input and game loop 
+current_location = starting #Starting point 
+
+while True: #Loop for user input 
+	
+	response = input(
+	"You have just received a new order, you need to go to Roupell Street SE1\n" 
+	"and deliver the food on time.\n" 
+	"Are you ready to start the delivery? (yes/no)" 
+	) # Get user input 
+	
+	if response.lower().strip() == "yes": # make user input lowercase and remove space 
+		game_running = True 
+		print(
+			"Great! You have accepted the delivery, you are now at the starting point.\n" 
+			"Your GPS is now calculating the best route.\n"
+			"Something is not working. The GPS is broken.\n" 
+			"You need to find your way to Roupell Street on your own." 
+		) 
+	
+	elif response.lower().strip() == "no": 
+		game_running = False 
+		print("The delivery has been assigned to another driver.")
+
+	else: 
+		print("Invalid input, please enter yer or not.") 
+
+### When the game is running 
+
+while game_running
+	pass # pass for now 
+	
 
 
 
