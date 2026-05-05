@@ -15,6 +15,13 @@ while "GPS part" not in bag:
 
   for item in antique_items:
     print("-", item)
+   
+  choice = input("Enter item name: ").lower().strip()
+  
+  if choice not in antique_items:
+        print("That item is not in the antique shop. Try again.")
+
+    
   elif antique_items[choice] == "GPS part":
     print("You searched the", choice)
     print("You found the GPS part!")
