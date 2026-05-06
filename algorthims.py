@@ -36,9 +36,20 @@ class Inventory:
         return search(self.items, item) is not None
 
 
+shop_item_description = {"shopkeeper" = ("Welcome to my humble shop, starngar!", "You can find things from all around the universe here!")
+"GPS": ( "Is this what you are looking for?", "Luckily, some guy sold me his old bike scraps, and this is one of the parts which are in good condition", "It looks rusty and old, but I assure you, it works like it is brand new!")
+"Raygun": ("A buddy from your planet with a funny accent called Richtofen sold me this weapon", "He told me it is one of his best creations or something....", "Yeah, it looks as weird as him") }
+
 def search_shop(shop_choices, item_wanted player_inventory):
+    index = search(shop_choices.choice)
+    offered_item = shop_choices.choice[index]
     item_wanted = gps
-    index = search(shop_location.choices)
+    descriptions = shop_item_description.get(offered_item)
+    if offered_item == "shopkeeper":
+        return descriptions
+    if offered_item == "Raygun":
+        return descriptions
+        
     if player_inventory has(item_wanted):
         return f"n/ you found the GPS part!"
     else:
