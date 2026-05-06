@@ -47,7 +47,7 @@ class Graph:
 		It adds to_location to the connections of the from_location
 		If two_way = True then connection is undirected."""
 
-		if from_location not in self.locations or to_location not in self.locations: #Checks library 
+		if from_location.name not in self.locations or to_location.name not in self.locations: #Checks library 
 			return None 
 		self.locations[from_location.name].connections[to_location.name] = to_location # Adds connection 
 		if two_way: 
