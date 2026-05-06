@@ -12,10 +12,10 @@ class Location:
 	Stores name, description, connections to other locations, 
 	and available actions."""
 	def __init__(self, name: str, description:str): 
-        self.name = name 
-        self.description = description
-        self.connections = {} #Dictionary to hold the connections (edges) 
-        self.choices = [] #List of choices at the location 
+		self.name = name 
+		self.description = description
+		self.connections = {} #Dictionary to hold the connections (edges) 
+		self.choices = [] #List of choices at the location 
 
 	def add_choice(self, choice): 
 		"""Method to add choices to the location's chocie list """
