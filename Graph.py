@@ -140,7 +140,7 @@ while True: #Loop for user input
 		break # Exit the loop to end the game
 		
 	else: 
-		print("Invalid input, please enter yer or not.") 
+		print("Invalid input, please enter yes or no.") 
 		
 
 ### When the game is running 
