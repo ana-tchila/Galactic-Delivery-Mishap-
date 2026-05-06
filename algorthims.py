@@ -34,3 +34,4 @@ class Inventory:
 
     def has(self, item):
         return search(self.items, item) is not None
+player_invetory = Inventory()
