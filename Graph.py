@@ -77,7 +77,7 @@ shop = Location( 'Antique Shop', 'Every item has its use - find what is useful f
 #5752030
 parade = Location( 'Alien Parade', 'Fun like you have never experienced before, join the alien king on his ship')
 destination = Location( 'Roupell Street SE1', 'House of Brad Cooper') 
-Celebration = Location( 'Celebration', 'You made it to Brad Copper on time. Time for a promotion and well deserved party') 
+celebration = Location( 'Celebration', 'You made it to Brad Copper on time. Time for a promotion and well deserved party') 
 
 #Adding Nodes to the Graph 
 galaxy.add_location(start) 
