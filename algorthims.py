@@ -44,7 +44,7 @@ def search_shop(shop_choices, item_wanted, player_inventory):
     index = search(shop_choices.choice, item_wanted)
     offered_item = shop_choices.choice[index]
     item_wanted = "GPS"
-    descriptions = shop_item_description.get(offered_item, "Woah buddy, you wish!)
+    descriptions = shop_item_description.get(offered_item, "Woah buddy, you wish!")
     if offered_item == "shopkeeper":
         return descriptions
      
