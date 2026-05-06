@@ -132,14 +132,16 @@ while True: #Loop for user input
 			"Something is not working. The GPS is broken.\n" 
 			"You need to find your way to Roupell Street on your own." 
 		) 
-	
+		break #Exit the loop to start the game 
+		
 	elif response.lower().strip() == "no": 
 		game_running = False 
 		print("The delivery has been assigned to another driver.")
-
+		break # Exit the loop to end the game
+		
 	else: 
 		print("Invalid input, please enter yer or not.") 
-		break 
+		
 
 ### When the game is running 
 
