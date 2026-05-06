@@ -11,7 +11,7 @@ class Location:
 	
 	Stores name, description, connections to other locations, 
 	and available actions."""
-	def __init__(self, name: str, description:str): 
+    def __init__(self, name: str, description:str): 
         self.name = name 
         self.description = description
         self.connections = {} #Dictionary to hold the connections (edges) 
@@ -49,9 +49,9 @@ class Graph:
 
 		if from_location not in self.locations or to_locations not in self.location: #Checks library 
 			return None 
-		self.location[from_location.name].connections[to_location.name] = to_location # Adds connection 
+		self.locations[from_location.name].connections[to_location.name] = to_location # Adds connection 
 		if two_way: 
-			self.location[to_location.name].connection[from_location.name] = from_location #Makes connection undirected 
+			self.locations[to_location.name].connection[from_location.name] = from_location #Makes connection undirected 
 
 	def find_location(self, location_n) 
 		"""Finds the location in the dictionary
@@ -139,10 +139,11 @@ while True: #Loop for user input
 
 	else: 
 		print("Invalid input, please enter yer or not.") 
+		break 
 
 ### When the game is running 
 
-while game_running
+while game_running: 
 	pass # pass for now 
 	
 
