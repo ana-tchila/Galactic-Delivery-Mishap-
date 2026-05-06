@@ -11,7 +11,7 @@ class Location:
 	
 	Stores name, description, connections to other locations, 
 	and available actions."""
-    def __init__(self, name: str, description:str): 
+	def __init__(self, name: str, description:str): 
         self.name = name 
         self.description = description
         self.connections = {} #Dictionary to hold the connections (edges) 
@@ -47,11 +47,11 @@ class Graph:
 		It adds to_location to the connections of the from_location
 		If two_way = True then connection is undirected."""
 
-		if from_location not in self.locations or to_locations not in self.location: #Checks library 
+		if from_location not in self.locations or to_locations not in self.locations: #Checks library 
 			return None 
 		self.locations[from_location.name].connections[to_location.name] = to_location # Adds connection 
 		if two_way: 
-			self.locations[to_location.name].connection[from_location.name] = from_location #Makes connection undirected 
+			self.locations[to_location.name].connections[from_location.name] = from_location #Makes connection undirected 
 
 	def find_location(self, location_n) 
 		"""Finds the location in the dictionary
@@ -66,7 +66,7 @@ class Graph:
 galaxy = Graph()
 
 #Adding the Nodes 
-start = Location( 'Start Point', 'Oooops the GPS broke down') 
+starting = Location( 'Start Point', 'Oooops the GPS broke down') 
 garage = Location( 'Garage', 'Shell plc gas station, where people can recharge their vehicles and get their vehicles fixed') 
 diner = Location( 'Diner', 'A Diner that offers more food: community') 
 shop = Location( 'Antique Shop', 'Every item has its use - find what is useful for you') 
@@ -80,7 +80,7 @@ destination = Location( 'Roupell Street SE1', 'House of Brad Cooper')
 celebration = Location( 'Celebration', 'You made it to Brad Copper on time. Time for a promotion and well deserved party') 
 
 #Adding Nodes to the Graph 
-galaxy.add_location(start) 
+galaxy.add_location(starting) 
 galaxy.add_location(garage) 
 galaxy.add_location(diner) 
 galaxy.add_location(shop) 
@@ -95,8 +95,8 @@ galaxy.add_location(destination)
 galaxy.add_location(celebration) 
 
 #Creating the edges 
-galaxy.add_connection(start, garage, False) #One way connection only 
-galaxy.add_connection(start, diner) 
+galaxy.add_connection(starting, garage, False) #One way connection only 
+galaxy.add_connection(starting, diner) 
 galaxy.add_connection(garage, diner) 
 galaxy.add_connection(diner, shop) 
 ###5752030
@@ -114,7 +114,7 @@ galaxy.add_connection(shop, celebration)
 ###5740479 
 
 #User input and game loop 
-current_location = start #Starting point 
+current_location = starting #Starting point 
 
 while True: #Loop for user input 
 	
