@@ -86,9 +86,9 @@ galaxy.add_location(diner)
 galaxy.add_location(shop) 
 
 #Adding choices to the nodes inside 
-shop.add_choice(shopkeeper)
-shop.add_choice(gps)
-shop.add_choice(raygun)
+#shop.add_choice(shopkeeper)
+#shop.add_choice(gps)
+#shop.add_choice(raygun)
 
 galaxy.add_location(parade) 
 galaxy.add_location(destination) 
