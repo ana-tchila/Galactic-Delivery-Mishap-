@@ -39,7 +39,7 @@ class Graph:
 		if location.name not in self.locations: # Checks location in the library 
 			self.locations[location.name] = location # Adds location to the library 
 		else: 
-			return none # Returns none 
+			return None # Returns none 
 
 	def add_connection(self, from_location, to_location, two_way = True): 
 		"""Adds a connection (edge) between two locations. 
