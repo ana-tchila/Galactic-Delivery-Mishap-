@@ -34,4 +34,14 @@ class Inventory:
 
     def has(self, item):
         return search(self.items, item) is not None
-player_invetory = Inventory()
+
+
+def search_shop(shop_choices, item_wanted player_inventory):
+    item_wanted = gps
+    index = search(shop_location.choices)
+    if player_inventory has(item_wanted):
+        return f"n/ you found the GPS part!"
+    else:
+        return f" This is not helpful."
+
+    
