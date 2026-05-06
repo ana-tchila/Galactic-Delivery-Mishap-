@@ -53,7 +53,7 @@ class Graph:
 		if two_way: 
 			self.locations[to_location.name].connections[from_location.name] = from_location #Makes connection undirected 
 
-	def find_location(self, location_n) 
+	def find_location(self, location_n): 
 		"""Finds the location in the dictionary
 		
 		Checks self.locations and returns the object""" 
@@ -108,7 +108,7 @@ galaxy.add_connection(diner, parade)
 galaxy.add_connection(shop, garage) 
 galaxy.add_connection(parade, destination) 
 galaxy.add_connection(garage, destination) 
-galaxy.add_connection(start, celebration) 
+galaxy.add_connection(starting, celebration) 
 galaxy.add_connection(shop, celebration) 
 
 ###5740479 
