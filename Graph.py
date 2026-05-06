@@ -80,10 +80,12 @@ destination = Location( 'Roupell Street SE1', 'House of Brad Cooper')
 Celebration = Location( 'Celebration', 'You made it to Brad Copper on time. Time for a promotion and well deserved party') 
 
 #Adding Nodes to the Graph 
-galaxy.add_location(starting) 
+galaxy.add_location(start) 
 galaxy.add_location(garage) 
 galaxy.add_location(diner) 
 galaxy.add_location(shop) 
+
+#Adding choices to the nodes inside 
 shop.add_choice(shopkeeper)
 shop.add_choice(gps)
 shop.add_choice(raygun)
@@ -93,8 +95,8 @@ galaxy.add_location(destination)
 galaxy.add_location(celebration) 
 
 #Creating the edges 
-galaxy.add_connection(starting, garage, False) #One way connection only 
-galaxy.add_connection(starting, diner) 
+galaxy.add_connection(start, garage, False) #One way connection only 
+galaxy.add_connection(start, diner) 
 galaxy.add_connection(garage, diner) 
 galaxy.add_connection(diner, shop) 
 ###5752030
@@ -112,7 +114,7 @@ galaxy.add_connection(shop, celebration)
 ###5740479 
 
 #User input and game loop 
-current_location = starting #Starting point 
+current_location = start #Starting point 
 
 while True: #Loop for user input 
 	
