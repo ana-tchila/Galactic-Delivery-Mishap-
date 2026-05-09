@@ -70,11 +70,6 @@ starting = Location( 'Start Point', 'Oooops the GPS broke down')
 garage = Location( 'Garage', 'Shell plc gas station, where people can recharge their vehicles and get their vehicles fixed') 
 diner = Location( 'Diner', 'A Diner that offers more food: community') 
 shop = Location( 'Antique Shop', 'Every item has its use - find what is useful for you') 
-##5752030
-##shopkeeper = location( "shoopkeeper", "Welcome to my humble shop, starngar!", "You can find things from all around the universe here!")
-##gps = location( "GPS", "Is this what you are looking for?", "Luckily, some guy sold me his old bike scraps, and this is one of the parts which are in good condition", "It looks rusty and old, but I assure you, it works like it is brand new!")
-##raygun = location( "Raygun", "A buddy from your planet with a funny accent called Richtofen sold me this weapon", "He told me it is one of his best creations or something....", "Yeah, it looks as weird as him")
-#5752030
 parade = Location( 'Alien Parade', 'Fun like you have never experienced before, join the alien king on his ship')
 destination = Location( 'Roupell Street SE1', 'House of Brad Cooper') 
 celebration = Location( 'Celebration', 'You made it to Brad Copper on time. Time for a promotion and well deserved party') 
@@ -86,9 +81,9 @@ galaxy.add_location(diner)
 galaxy.add_location(shop) 
 
 #Adding choices to the nodes inside 
-#shop.add_choice(shopkeeper)
-#shop.add_choice(gps)
-#shop.add_choice(raygun)
+#shop.add_choice("Talk to the Shopkeeper")
+#shop.add_choice("GPS")
+#shop.add_choice("Raygun")
 
 galaxy.add_location(parade) 
 galaxy.add_location(destination) 
@@ -99,11 +94,6 @@ galaxy.add_connection(starting, garage, False) #One way connection only
 galaxy.add_connection(starting, diner) 
 galaxy.add_connection(garage, diner) 
 galaxy.add_connection(diner, shop) 
-###5752030
-##galaxy.add_connection(shop, shopkeeper)
-##galaxy.add_connection(shop, gps)
-##galaxy.add_connection(shop, raygun)
-##5752030
 galaxy.add_connection(diner, parade) 
 galaxy.add_connection(shop, garage) 
 galaxy.add_connection(parade, destination) 
@@ -111,9 +101,47 @@ galaxy.add_connection(garage, destination)
 galaxy.add_connection(starting, celebration) 
 galaxy.add_connection(shop, celebration) 
 
-###5740479 
 
-#User input and game loop 
+#5740479 
+#Breadth first Search 
+
+from collections import deque #import the deque class for the queue 
+
+def bfs(start, goal): 
+	""" Breadth-First Search algorithm to find the shortest path
+
+	Args: 
+		start: starting location object.  
+		goal: destination location object. """
+
+	visited = {start} # Set to keep track of visited nodes 
+	queue = deque([[start]]) # Queue to hold the paths to explore 
+
+	while queue: 
+
+		path = queue.popleft() # Get the first path from the queue 
+		
+		current_location = path[-1] #Get the last location in the path 
+		if current_location == goal:
+			return path # Return the path to reach the goal 
+
+		for neighbor in current_location.connections.values(): # loops throught the connections of the current_location 
+			if neighbor not in visited: # Check if the neighbor has not been visited 
+
+				visited.add(neighbor) # Mark the current location as visited 
+
+				new_path = list(path) # Create a new path with the neighbor 
+				new_path.append(neighbor) 
+				queue.append(new_path) # Add the new path to the queue
+
+	return None # Return None if no path is found 
+#5740479 
+
+
+#5740479 
+
+### When the game is running 
+
 current_location = starting #Starting point 
 
 while True: #Loop for user input 
@@ -127,8 +155,8 @@ while True: #Loop for user input
 	if response.lower().strip() == "yes": # make user input lowercase and remove space 
 		game_running = True 
 		print(
-			"Great! You have accepted the delivery, you are now at the starting point.\n" 
-			"Your GPS is now calculating the best route.\n"
+			"Great! You have accepted the delivery.\n" 
+			"GPS: Calculating the best route............\n"
 			"Something is not working. The GPS is broken.\n" 
 			"You need to find your way to Roupell Street on your own." 
 		) 
@@ -141,17 +169,4 @@ while True: #Loop for user input
 		
 	else: 
 		print("Invalid input, please enter yes or no.") 
-		
-
-### When the game is running 
-
-while game_running: 
-	pass # pass for now 
-	
-
-
-
-
-
-
 

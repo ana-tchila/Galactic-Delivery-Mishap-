@@ -7,7 +7,7 @@ antique_items = {
 
 bag = []
 
-print{"You have entered the antique shop.")
+print("You have entered the antique shop.")
 print("You need to find the missing GPS part.")
 
 while "GPS part" not in bag:
