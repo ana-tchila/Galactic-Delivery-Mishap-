@@ -67,41 +67,38 @@ galaxy = Graph()
 
 #Adding the Nodes 
 starting = Location( 'Start Point', 'You look around and see empty space') 
-garage = Location( 'Garage', 'Shell plc gas station, where people can recharge their vehicles and get their vehicles fixed') 
+garage = Location( 'Garage', 'Shell plc gas station, where people can refuel and get their vehicles fixed') 
+police = Location( 'Police check point', 'A checkpoint is ahead - you need to show your driver license to pass through') 
 diner = Location( 'Diner', 'A Diner that offers more food: community') 
-shop = Location( 'Antique Shop', 'Every item has its use - find what is useful for you') 
+shop = Location( ' Antique Shop', 'Every item has its use - find what is useful for you') 
 parade = Location( 'Alien Parade', 'Fun like you have never experienced before, join the alien king on his ship')
 destination = Location( 'Roupell Street SE1', 'House of Brad Cooper') 
 celebration = Location( 'Celebration', 'You made it to Brad Copper on time. Time for a promotion and well deserved party')
-
-
-#Adding Nodes to the Graph 
-galaxy.add_location(starting) 
-galaxy.add_location(garage) 
-galaxy.add_location(diner) 
-galaxy.add_location(shop) 
 
 #Adding choices to the nodes inside 
 #shop.add_choice("Talk to the Shopkeeper")
 #shop.add_choice("GPS")
 #shop.add_choice("Raygun")
 
+#Adding Nodes to the Graph 
+galaxy.add_location(starting) 
+galaxy.add_location(garage) 
+galaxy.add_location(diner) 
+galaxy.add_location(shop) 
+galaxy.add_location(police) 
 galaxy.add_location(parade) 
 galaxy.add_location(destination) 
 galaxy.add_location(celebration) 
 
 #Creating the edges 
 galaxy.add_connection(starting, garage, False) #One way connection only 
-galaxy.add_connection(starting, diner) 
-galaxy.add_connection(garage, diner) 
-galaxy.add_connection(diner, shop) 
-galaxy.add_connection(diner, parade) 
-galaxy.add_connection(shop, garage) 
-galaxy.add_connection(parade, destination) 
-galaxy.add_connection(garage, destination) 
-#galaxy.add_connection(starting, celebration) 
-#galaxy.add_connection(shop, celebration) 
-# Add connection later when the player gets to the destination 
+galaxy.add_connection(starting, diner, False) 
+galaxy.add_connection(garage, diner, False) 
+galaxy.add_connection(diner, shop, False) 
+galaxy.add_connection(diner, parade, False) 
+galaxy.add_connection(shop, garage, False)
+galaxy.add_connection(parade, destination, False) 
+galaxy.add_connection(police, destination, False)
 
 #5740479 
 #Breadth first Search 
@@ -141,8 +138,6 @@ def bfs(start, goal):
 
 #5740479 
 
-current_location = starting #Starting point 
-
 # User input to start the game and decide if the player wants to play or not 
 
 while True: #Loop for user input 
@@ -150,7 +145,7 @@ while True: #Loop for user input
 	response = input(
 	"You are an intergalactic space delivery driver.\n"
 	"You have just received an urgent food order to Roupell Street SE1.\n"  
-	"Are you ready to start the delivery? (yes/no)" 
+	"Are you ready to start the delivery? (yes/no) " 
 	) # Get user input 
 	
 	if response.lower().strip() == "yes": # make user input lowercase and remove space 
@@ -174,22 +169,57 @@ while True: #Loop for user input
 
 # Actual game loop 
 
+current_location = starting # Set the current location to the starting point 
+
 while game_running: 
 	
-	print(f"Current location:{current_location.name}") #print the current location name
-	print(current_location.description) #prints the current location description
+	print(f"Current location: {current_location.description}") #print the current location name
+
+	# Enter special locations with unique interactions here 
+	if current_location == shop: 
+		pass # Add unique interaction 
+
+	if current_location == parade: 
+		pass # Add unique interaction when Latefa finishes her part 
+
+	if current_location == destination: 
+		print("Congratulations! You have successfully delivered the package to Brad Cooper on time.")
+		print(" Notification Alert: A message from Boss")
+		print("Boss: Great job on the delivery! You earned a promotion.")
+		print("Boss: I am throwing a party to celebrate our success, you are invited!")
+		print("Boss: See you at the celebration!")
+
+
+		galaxy.add_connection(destination, celebration) # Add connection to celebration after reaching the destination 
+		galaxy.add_connection(shop, celebration) # Add connection to celebration from the shop 
+		
+		#Making the connection two way so the BFS can find the shortest path 
+		galaxy.add_connection(starting, garage) #One way connection only 
+		galaxy.add_connection(starting, diner) 
+		galaxy.add_connection(garage, diner) 
+		galaxy.add_connection(diner, shop) 
+		galaxy.add_connection(diner, parade) 
+		galaxy.add_connection(shop, garage)
+		galaxy.add_connection(parade, destination) 
+		galaxy.add_connection(police, destination)
+
+		shortest_path = bfs(destination, celebration) # Find the shortest path to the celebration 
+
+		print("GPS is calculating the fastest route to the celbration .  .  .")
+		print("Shortest path to the celebration:")
+
+		for location in shortest_path: 
+			print(location.name) # Print the names of the locations in the shortest path 
 
 	if current_location.choices: #Check if there are choices at the current location 
 		print("Available choices:")
 		for choice in current_location.choices: 
 			print(f"- {choice}") #Print the choices at the current location
 	
-	print(list(current_location.connections.keys())) #prints the available connections from the current location 
+	print(f"Available routes: {list(current_location.connections.keys())}") # Print the available routes from the current location 
 	
-	user_input = input("Where do you want to go?").strip() # Get user input for the next location 
+	user_input = input("Where do you want to go? ").strip() # Get user input for the next location 
 	if user_input in current_location.connections:
 		current_location = current_location.connections[user_input] # Move to the next location 
 	else: 
 		print("Invalid location, please try again.")
-
-
