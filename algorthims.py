@@ -41,8 +41,8 @@ shop_item_description = {"shopkeeper" : ("Welcome to my humble shop, starngar!",
 "Raygun": ("A buddy from your planet with a funny accent called Richtofen sold me this weapon", "He told me it is one of his best creations or something....", "Yeah, it looks as weird as him") }
 
 def search_shop(shop_choices, item_wanted, player_inventory):
-    index = search(shop_choices.choice, item_wanted)
-    offered_item = shop_choices.choice[index]
+    index = search(shop_choices.choices, item_wanted)
+    offered_item = shop_choices.choices[index]
     item_wanted = "GPS"
     descriptions = shop_item_description.get(offered_item, "Woah buddy, you wish!")
     if offered_item == "shopkeeper":
