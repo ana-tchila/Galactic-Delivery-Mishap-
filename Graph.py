@@ -15,11 +15,11 @@ class Location:
 		self.name = name 
 		self.description = description
 		self.connections = {} #Dictionary to hold the connections (edges) 
-		self.choices = [] #List of choices at the location 
+		self.choices = {} #Dictionary to hold the choices 
 
-	def add_choice(self, choice): 
+	def add_choice(self, choice:str, response:str): 
 		"""Method to add choices to the location's chocie list """
-		self.choices.append(choice) #appends the list of choices 
+		self.choices[choice] = response #adds the choice and its response to the dictionary
 		
 #Graph that the user will be traversing 
 
@@ -76,9 +76,13 @@ destination = Location( 'Roupell Street SE1', 'House of Brad Cooper')
 celebration = Location( 'Celebration', 'You made it to Brad Copper on time. Time for a promotion and well deserved party')
 
 #Adding choices to the nodes inside 
-#shop.add_choice("Talk to the Shopkeeper")
-#shop.add_choice("GPS")
-#shop.add_choice("Raygun")
+diner.add_choice("Talk to the Bartender", "Bartender: Do I look like a GPS system to you? \n" 
+"Go to the parade, you will fit right in with the crowd there.")
+diner.add_choice("Talk to the old man at the counter", "OLD MAN: You younger generation, always dependent on technology.\n"
+"In the old days we used our brains. Go to the Antique shop, you might find a map. If you can even read it.") 
+garage.add_choice("Talk to the Mechanic", "I am sorry,\n"
+"but we do not have the parts to fix your GPS system. You might want to rest at the diner.")
+
 
 #Adding Nodes to the Graph 
 galaxy.add_location(starting) 
@@ -227,8 +231,11 @@ while game_running:
 
 	if current_location.choices: #Check if there are choices at the current location 
 		print("Available choices:")
-		for choice in current_location.choices: 
+		for choice in current_location.choices.keys(): 
 			print(f"- {choice}") #Print the choices at the current location
+		user_choice = input("What do you want to do? ").strip() # Get user input for the choice
+		if user_choice in current_location.choices: 
+			print(current_location.choices[user_choice]) # Print the response for the chosen action 
 	
 	print(f"Available routes: {list(current_location.connections.keys())}") # Print the available routes from the current location 
 	
