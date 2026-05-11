@@ -111,10 +111,10 @@ def make_connections_reciprocal():
 	galaxy.add_connection(shop, garage)
 	galaxy.add_connection(parade, destination) 
 	galaxy.add_connection(police, destination)
-	galaxy.add_connection(destination, celebration) # Add connection to celebration after reaching the destination 
-	galaxy.add_connection(shop, celebration) # Add connection to celebration from the shop 
-		
-
+	galaxy.add_connection(shop, celebration) 
+	galaxy.add_connection(starting, celebration)
+	galaxy.add_connection(diner, celebration) 
+	
 #5740479 
 #Breadth first Search 
 
