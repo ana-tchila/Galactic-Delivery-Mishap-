@@ -66,13 +66,14 @@ class Graph:
 galaxy = Graph()
 
 #Adding the Nodes 
-starting = Location( 'Start Point', 'Oooops the GPS broke down') 
+starting = Location( 'Start Point', 'You look around and see empty space') 
 garage = Location( 'Garage', 'Shell plc gas station, where people can recharge their vehicles and get their vehicles fixed') 
 diner = Location( 'Diner', 'A Diner that offers more food: community') 
 shop = Location( 'Antique Shop', 'Every item has its use - find what is useful for you') 
 parade = Location( 'Alien Parade', 'Fun like you have never experienced before, join the alien king on his ship')
 destination = Location( 'Roupell Street SE1', 'House of Brad Cooper') 
-celebration = Location( 'Celebration', 'You made it to Brad Copper on time. Time for a promotion and well deserved party') 
+celebration = Location( 'Celebration', 'You made it to Brad Copper on time. Time for a promotion and well deserved party')
+
 
 #Adding Nodes to the Graph 
 galaxy.add_location(starting) 
@@ -98,9 +99,9 @@ galaxy.add_connection(diner, parade)
 galaxy.add_connection(shop, garage) 
 galaxy.add_connection(parade, destination) 
 galaxy.add_connection(garage, destination) 
-galaxy.add_connection(starting, celebration) 
-galaxy.add_connection(shop, celebration) 
-
+#galaxy.add_connection(starting, celebration) 
+#galaxy.add_connection(shop, celebration) 
+# Add connection later when the player gets to the destination 
 
 #5740479 
 #Breadth first Search 
@@ -140,15 +141,15 @@ def bfs(start, goal):
 
 #5740479 
 
-### When the game is running 
-
 current_location = starting #Starting point 
+
+# User input to start the game and decide if the player wants to play or not 
 
 while True: #Loop for user input 
 	
 	response = input(
-	"You have just received a new order, you need to go to Roupell Street SE1\n" 
-	"and deliver the food on time.\n" 
+	"You are an intergalactic space delivery driver.\n"
+	"You have just received an urgent food order to Roupell Street SE1.\n"  
 	"Are you ready to start the delivery? (yes/no)" 
 	) # Get user input 
 	
@@ -156,9 +157,9 @@ while True: #Loop for user input
 		game_running = True 
 		print(
 			"Great! You have accepted the delivery.\n" 
-			"GPS: Calculating the best route............\n"
-			"Something is not working. The GPS is broken.\n" 
-			"You need to find your way to Roupell Street on your own." 
+			"Your GPS is calculating the fastest route.. . .  .\n"
+			"ERROR: GPS CONNECTION LOST.\n" 
+			"You must navigate through the galaxy on your own." 
 		) 
 		break #Exit the loop to start the game 
 		
@@ -169,4 +170,26 @@ while True: #Loop for user input
 		
 	else: 
 		print("Invalid input, please enter yes or no.") 
+
+
+# Actual game loop 
+
+while game_running: 
+	
+	print(f"Current location:{current_location.name}") #print the current location name
+	print(current_location.description) #prints the current location description
+
+	if current_location.choices: #Check if there are choices at the current location 
+		print("Available choices:")
+		for choice in current_location.choices: 
+			print(f"- {choice}") #Print the choices at the current location
+	
+	print(list(current_location.connections.keys())) #prints the available connections from the current location 
+	
+	user_input = input("Where do you want to go?").strip() # Get user input for the next location 
+	if user_input in current_location.connections:
+		current_location = current_location.connections[user_input] # Move to the next location 
+	else: 
+		print("Invalid location, please try again.")
+
 
