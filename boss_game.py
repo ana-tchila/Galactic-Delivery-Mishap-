@@ -225,3 +225,4 @@ else:
 print("\nBest route:", " -> ".join(best_route))
 print("Fuel cost:", costs["Destination"])
 print("Final Score:", score)
+

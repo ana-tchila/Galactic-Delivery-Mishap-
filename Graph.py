@@ -70,7 +70,7 @@ starting = Location( 'Start Point', 'You look around and see empty space')
 garage = Location( 'Garage', 'Shell plc gas station, where people can refuel and get their vehicles fixed') 
 police = Location( 'Police check point', 'A checkpoint is ahead - you need to show your driver license to pass through') 
 diner = Location( 'Diner', 'A Diner that offers more food: community') 
-shop = Location( ' Antique Shop', 'Every item has its use - find what is useful for you') 
+shop = Location( 'Antique Shop', 'Every item has its use - find what is useful for you') 
 parade = Location( 'Alien Parade', 'Fun like you have never experienced before, join the alien king on his ship')
 destination = Location( 'Roupell Street SE1', 'House of Brad Cooper') 
 celebration = Location( 'Celebration', 'You made it to Brad Copper on time. Time for a promotion and well deserved party')
@@ -99,6 +99,21 @@ galaxy.add_connection(diner, parade, False)
 galaxy.add_connection(shop, garage, False)
 galaxy.add_connection(parade, destination, False) 
 galaxy.add_connection(police, destination, False)
+
+def make_connections_reciprocal(): 
+	""" Makes the connections between the locations reciprocal for BFS usage.""" 
+
+	galaxy.add_connection(starting, garage) #One way connection only 
+	galaxy.add_connection(starting, diner) 
+	galaxy.add_connection(garage, diner) 
+	galaxy.add_connection(diner, shop) 
+	galaxy.add_connection(diner, parade) 
+	galaxy.add_connection(shop, garage)
+	galaxy.add_connection(parade, destination) 
+	galaxy.add_connection(police, destination)
+	galaxy.add_connection(destination, celebration) # Add connection to celebration after reaching the destination 
+	galaxy.add_connection(shop, celebration) # Add connection to celebration from the shop 
+		
 
 #5740479 
 #Breadth first Search 
@@ -138,6 +153,39 @@ def bfs(start, goal):
 
 #5740479 
 
+#Stack 
+class Stack: 
+	""" Stack data Structure """ 
+	def __init__(self): 
+		self.stack = [] # List to hold the stack elements 
+
+	def push(self, item): 
+		"""Adds an item to the top of the stack."""
+		return self.stack.append(item) # returns item to the stack 
+
+	def is_empty(self): 
+		"""Checks if the stack is empty."""
+		return len(self.stack) == 0 # Returns true if the stack is empty, false otherwise 
+
+	def pop(self): 
+		"""Removes and returns the item at the top of the stack."""
+		if not self.is_empty(): #Check if the stack is not empty 
+			return self.stack.pop() # Returns the item at the top of the stack
+		else: 
+			return None # Returns None if the stack is empty 
+	
+	def peek(self): 
+		"""Returns the item at the top of the stack without removing it.""" 
+		if not self.is_empty(): # Check if the stack is not empty 
+			return self.stack[-1] #Returns the item a the top without removing it 
+		else: 
+			return None #Returns None if the stack is empty 
+
+#5740479 
+
+
+#5740479 
+
 # User input to start the game and decide if the player wants to play or not 
 
 while True: #Loop for user input 
@@ -168,48 +216,14 @@ while True: #Loop for user input
 
 
 # Actual game loop 
+#5740479 
 
 current_location = starting # Set the current location to the starting point 
+movement_history = Stack() #Stack to keep track of the movement history 
 
 while game_running: 
 	
 	print(f"Current location: {current_location.description}") #print the current location name
-
-	# Enter special locations with unique interactions here 
-	if current_location == shop: 
-		pass # Add unique interaction 
-
-	if current_location == parade: 
-		pass # Add unique interaction when Latefa finishes her part 
-
-	if current_location == destination: 
-		print("Congratulations! You have successfully delivered the package to Brad Cooper on time.")
-		print(" Notification Alert: A message from Boss")
-		print("Boss: Great job on the delivery! You earned a promotion.")
-		print("Boss: I am throwing a party to celebrate our success, you are invited!")
-		print("Boss: See you at the celebration!")
-
-
-		galaxy.add_connection(destination, celebration) # Add connection to celebration after reaching the destination 
-		galaxy.add_connection(shop, celebration) # Add connection to celebration from the shop 
-		
-		#Making the connection two way so the BFS can find the shortest path 
-		galaxy.add_connection(starting, garage) #One way connection only 
-		galaxy.add_connection(starting, diner) 
-		galaxy.add_connection(garage, diner) 
-		galaxy.add_connection(diner, shop) 
-		galaxy.add_connection(diner, parade) 
-		galaxy.add_connection(shop, garage)
-		galaxy.add_connection(parade, destination) 
-		galaxy.add_connection(police, destination)
-
-		shortest_path = bfs(destination, celebration) # Find the shortest path to the celebration 
-
-		print("GPS is calculating the fastest route to the celbration .  .  .")
-		print("Shortest path to the celebration:")
-
-		for location in shortest_path: 
-			print(location.name) # Print the names of the locations in the shortest path 
 
 	if current_location.choices: #Check if there are choices at the current location 
 		print("Available choices:")
@@ -220,6 +234,41 @@ while game_running:
 	
 	user_input = input("Where do you want to go? ").strip() # Get user input for the next location 
 	if user_input in current_location.connections:
+		movement_history.push(current_location) # Push the new location to the stack 
 		current_location = current_location.connections[user_input] # Move to the next location 
 	else: 
 		print("Invalid location, please try again.")
+
+	# Enter special locations with unique interactions here 
+	if current_location == shop: 
+		pass # Add unique interaction 
+	
+	elif current_location == parade: 
+		pass # Add unique interaction when Latefa finishes her part 
+	
+	elif current_location == garage and movement_history.peek() == shop: 
+		if police not in current_location.connections.values(): #Check if the police checkpoint is already connected 
+			galaxy.add_connection(garage, police, False) # One way connection from garage to police checkpoint 
+			print("Mechanic installed the GPS and it is now working!")
+			print("GPS calculating the fastest route to the destination . . .")
+			print("Shortest Route --> Garage -> Police Checkpooint --> Destination")
+	
+	elif current_location == destination: 
+		print("Congratulations! You have successfully delivered the package to Brad Cooper on time.")
+		print(" Notification Alert: A message from Boss")
+		print("Boss: Great job on the delivery! You earned a promotion.")
+		print("Boss: I am throwing a party to celebrate our success, you are invited!")
+		print("Boss: See you at the celebration!")
+    		
+		make_connections_reciprocal() # Make the connections reciprocal for BFS 
+		shortest_path = bfs(destination, celebration) # Find the shortest path to the celebration 
+
+		print("GPS is calculating the fastest route to the celebration .  .  .")
+		print("Shortest path to the celebration:")
+
+		for location in shortest_path: 
+			print(location.name) # Print the names of the locations in the shortest path 
+		
+		game_running = False # End the game loop 
+	
+
