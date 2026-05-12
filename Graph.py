@@ -7,6 +7,8 @@ import random
 import time
 import os
 from boss_game import find_boss, space_boss_battle, route_map_challenge
+from algorthims import create_shop_system, Inventory, search 
+
 
 #Graph Node 
 
@@ -269,6 +271,9 @@ while game_running:
 			print("GPS calculating the fastest route to the destination . . .")
 			print("Shortest Route --> Garage -> Police Checkpooint --> Destination")
 	
+	elif current_location == police: 
+		pass # Add unique interaction for police checkpoint 
+	
 	elif current_location == destination: 
 		print("Congratulations! You have successfully delivered the package to Brad Cooper on time.")
 		print(" Notification Alert: A message from Boss")
@@ -287,4 +292,4 @@ while game_running:
 		
 		game_running = False # End the game loop 
 	
-
+#5740479 
