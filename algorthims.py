@@ -112,4 +112,4 @@ def create_shop_system():
 
 ### calling the function 
 
-### Orint statements to test the function + user guidence
+### Print statements to test the function + user guidence
