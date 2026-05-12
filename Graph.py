@@ -7,7 +7,7 @@ import random
 import time
 import os
 from boss_game import find_boss, space_boss_battle, route_map_challenge
-from shop_system import create_shop_system, Inventory, search 
+from shop_system import create_shop_system
 
 #Graph Node 
 
@@ -256,7 +256,8 @@ while game_running:
 
 	# Enter special locations with unique interactions here 
 	if current_location == shop: 
-		pass # Add unique interaction 
+		pass # IDK how to do this 
+
 	
 	elif current_location == parade: 
 		find_boss() # Call the function to find the boss 
