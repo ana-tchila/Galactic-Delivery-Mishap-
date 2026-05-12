@@ -32,7 +32,7 @@ while attempts > 0:
     lives = lives - 1
     attempts = attempts -1  
 
-      if lives == 0:
+  if lives == 0:
         result = "Lost in Garage"
 
 # FOR OTHER CODE SECTIONS 
