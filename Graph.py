@@ -7,8 +7,7 @@ import random
 import time
 import os
 from boss_game import find_boss, space_boss_battle, route_map_challenge
-from algorthims import create_shop_system, Inventory, search 
-
+from shop_system import create_shop_system, Inventory, search 
 
 #Graph Node 
 
