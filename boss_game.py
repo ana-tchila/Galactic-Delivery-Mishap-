@@ -4,7 +4,7 @@ import time
 import os
 
 
-score = 0
+score = 0 
 
 
 def show_status():

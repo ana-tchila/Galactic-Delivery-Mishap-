@@ -2,6 +2,12 @@
 
 ####5740479 
 
+from collections import deque
+import random
+import time
+import os
+from boss_game import find_boss, space_boss_battle, route_map_challenge
+
 #Graph Node 
 
 #Class Location (code for the nodes) 
@@ -121,8 +127,6 @@ def make_connections_reciprocal():
 	
 #5740479 
 #Breadth first Search 
-
-from collections import deque #import the deque class for the queue 
 
 def bfs(start, goal): 
 	""" Breadth-First Search algorithm to find the shortest path
@@ -254,7 +258,9 @@ while game_running:
 		pass # Add unique interaction 
 	
 	elif current_location == parade: 
-		pass # Add unique interaction when Latefa finishes her part 
+		find_boss() # Call the function to find the boss 
+		space_boss_battle() # Call the function for the space boss battle
+		route_map_challenge() # Call the function for the route map challenge 
 	
 	elif current_location == garage and movement_history.peek() == shop: 
 		if police not in current_location.connections.values(): #Check if the police checkpoint is already connected 
