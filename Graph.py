@@ -236,7 +236,10 @@ while game_running:
 		user_choice = input("What do you want to do? ").strip() # Get user input for the choice
 		if user_choice in current_location.choices: 
 			print(current_location.choices[user_choice]) # Print the response for the chosen action 
-	
+		else: 
+			print("Invalid choice, please type the choice exactly as shown.") # Print an error message for invalid choice 
+			continue # Skip the rest of the loop and ask for input again 
+
 	print(f"Available routes: {list(current_location.connections.keys())}") # Print the available routes from the current location 
 	
 	user_input = input("Where do you want to go? ").strip() # Get user input for the next location 
