@@ -236,18 +236,8 @@ def route_map_challenge():
     print("Fuel cost:", costs["Destination"])
     print("Final Score:", score)
 
-
 def main():
     find_boss()
     space_boss_battle()
     route_map_challenge()
 
-
-<<<<<<< HEAD
-main()
-=======
-print("\nBest route:", " -> ".join(best_route))
-print("Fuel cost:", costs["Destination"])
-print("Final Score:", score)
-
->>>>>>> 795cea2d78c7649b2e27b58abd4e37f0f257d292
