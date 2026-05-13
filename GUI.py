@@ -3,7 +3,7 @@
 import pygame
 from sys import exit
 from Graph import galaxy, starting, garage, police, diner, shop, parade, destination, celebration, Stack, bfs, make_connections_reciprocal
-
+from shop_system import Inventory, search, search_shop
 
 pygame.init()
 pygame.mixer.init()
@@ -95,13 +95,13 @@ def build_connection_buttons(location, y_position=300):
         return buttons
     button_width = 500
     button_height = 40
-    for i, conn in enumerate(location.connections):
+    for i, conn_name in enumerate(location.connections):
         x = (800 - button_width) // 2
         y = y_position + i * 50
-        buttons.append(Button(x, y, button_width, button_height, f"Go to {conn.name}"))
+        buttons.append(Button(x, y, button_width, button_height, f"Go to {conn_name}"))
     return buttons
 
-def draw_scene(location, choice_buttons, connection_buttons):
+def draw_scene(location, choice_buttons, connection_buttons, dialogue=""):
     screen.fill((0, 0, 0))
     title_text = title_font.render(location.name, False, (255, 255, 255))
     screen.blit(title_text, (320, 50))
@@ -111,17 +111,31 @@ def draw_scene(location, choice_buttons, connection_buttons):
     desc_rect = desc_text.get_rect(center=(400, 200))
     pygame.draw.rect(screen, (255, 255, 255), (desc_rect.x - 10, desc_rect.y - 10, desc_rect.width + 20, desc_rect.height + 20), 2)
     screen.blit(desc_text, desc_rect)
-
+    
     for button in choice_buttons:
         button.draw(screen)
     for button in connection_buttons:
         button.draw(screen)
+    
+    draw_inventory(player_inventory)
 
+
+def draw_inventory(inventory):
+    pygame.draw.rect(screen, (255, 255, 255), (50, 400, 200, 150))
+    pygame.draw.line(screen, (255, 255, 255), (50, 400), (250, 550), 2)
+
+    if player_inventory.items:
+        inv_display = ", ".join(player_inventory.items)
+    else:
+        inv_display = "Empty"
+    inv_text = font.render(f"Inventory: {inv_display}", False, (255, 255, 255))
+    screen.blit(inv_text, (60, 410))
 
 current_screen = "menu"
 current_location = starting
 movement_history = Stack()
 current_dialogue = ""
+player_inventory = Inventory()
 choice_buttons = build_choice_buttons(current_location)
 connection_buttons = build_connection_buttons(current_location)
 
@@ -151,10 +165,11 @@ while running:
                 for button in connection_buttons:
                     if button.is_clicked(event.pos):
                         dest_name = button.text.replace("Go to ", "")
-                        next_location = next((loc for loc in current_location.connections if loc.name == dest_name), None)
-                        if next_location:
+                        if dest_name in current_location.connections:
+                            next_location = current_location.connections[dest_name]
                             movement_history.push(current_location)
                             current_location = next_location
+                            current_dialogue = ""
                             choice_buttons = build_choice_buttons(current_location)
                             connection_buttons = build_connection_buttons(current_location)
                             

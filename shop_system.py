@@ -35,7 +35,7 @@ def create_shop_system():
 
     #this class represents the player's inventory and provides methods to add, remove, and check for items. It uses the search function to check if an item is in the inventory.
 
-    class Inventory:
+    class inventory:
         def __init__(self):
             self.items = []
             print("\nInventory created.")
@@ -102,13 +102,13 @@ def create_shop_system():
 
     
     print("\nShop system is ready.")
-    return Inventory, search_shop
+    return inventory, search_shop
   
 
 
-### 5758609 -- Inventory, search_shop = create_shop_system()
+### 5758609 -- inventory, search_shop = create_shop_system()
 
-### player_inventory = Inventory()
+### player_inventory = inventory()
 
 ### calling the function 
 
