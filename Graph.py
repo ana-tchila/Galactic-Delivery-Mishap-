@@ -7,7 +7,7 @@ import random
 import time
 import os
 from boss_game import find_boss, space_boss_battle, route_map_challenge
-from shop_system import create_shop_system
+from shop_system import inventory, search_shop 
 
 #Graph Node 
 
@@ -21,14 +21,18 @@ class Location:
 	def __init__(self, name: str, description:str, items: str = None): 
 		self.name = name 
 		self.description = description
-		self.connections = {} #Dictionary to hold the connections (edges) 
-		self.items = items # Optional items that can be found at the location
+		self.connections = {} #Dictionary to hold the connections (edges)
 		self.choices = {} #Dictionary to hold the choices 
-
+		self.items = {} #Items that can be found at the Antique Shop 
+		
 
 	def add_choice(self, choice:str, response:str): 
-		"""Method to add choices to the location's chocie list """
+		"""Adds a player interaction choice to the location"""
 		self.choices[choice] = response #adds the choice and its response to the dictionary
+	
+	def add_item(self, item: str, description:str): 
+		"Adds a item and description to the location"
+		self.items[item] = description # adds the items and its description to the dictionary 
 		
 #Graph that the user will be traversing 
 
@@ -80,7 +84,7 @@ garage = Location( 'Garage', 'Shell plc gas station, where people can refuel and
 police = Location( 'Police check point', 'A checkpoint is ahead - you need to show your driver license to pass through') 
 diner = Location( 'Diner', 'A Diner that offers more food: community') 
 shop = Location( 'Antique Shop', 'Every item has its use - find what is useful for you') 
-parade = Location( 'Alien Parade', 'Fun like you have never experienced before, join the alien king on his ship')
+parade = Location( 'Alien Parade', 'The Alien Parade')
 destination = Location( 'Roupell Street SE1', 'House of Brad Cooper') 
 celebration = Location( 'Celebration', 'You made it to Brad Copper on time. Time for a promotion and well deserved party')
 
@@ -91,8 +95,15 @@ diner.add_choice("Talk to the old man at the counter", "OLD MAN: You younger gen
 "In the old days we used our brains. Go to the Antique shop, you might find a map. If you can even read it.") 
 garage.add_choice("Talk to the Mechanic", "I am sorry,\n"
 "but we do not have the parts to fix your GPS system. You might want to rest at the diner.")
-shop.add_choice("Talk to the Shopkeepr", "Welcome to my humble shop, starngar! \n" 
-"You can find things from all around the universe here!" )
+shop.add_choice("Talk to the Shopkeeper", "Welcome to my humble shop, stranger! \n" 
+"You can find the GPS you are searching for somewhere in my shop")
+
+#Adding the items 
+shop.add_item("GPS", "It looks old and rusty, but it works like it is new")
+shop.add_item("Raygun", "A buddy from your planet with a funny accent sold me this weapon.\n" 
+"He told me it is one of his best creations.") 
+shop.add_item("Cap", "This is such an antique, back from the time when people lived on Earth.")
+shop.add_item("Gloop", "Do not shake it")
 
 #Adding Nodes to the Graph 
 galaxy.add_location(starting) 
@@ -234,41 +245,29 @@ if __name__ == "__main__": # For the GUI to work
 
 	current_location = starting # Set the current location to the starting point 
 	movement_history = Stack() #Stack to keep track of the movement history 
-
+	player_inventory = inventory() #creates an instance of Inventory Class
 
 	while game_running: 
-	
-		print(f"Current location: {current_location.description}") #print the current location name
 
-		if current_location.choices: #Check if there are choices at the current location 
-			print("Available choices:")
-			for choice in current_location.choices.keys(): 
-				print(f"- {choice}") #Print the choices at the current location
-			user_choice = input("What do you want to do? ").strip() # Get user input for the choice
-			if user_choice in current_location.choices: 
-				print(current_location.choices[user_choice]) # Print the response for the chosen action 
-			else: 
-				print("Invalid choice, please type the choice exactly as shown.") # Print an error message for invalid choice 
-				continue # Skip the rest of the loop and ask for input again 
-
-		print(f"Available routes: {list(current_location.connections.keys())}") # Print the available routes from the current location 
-	
-		user_input = input("Where do you want to go? ").strip() # Get user input for the next location 
-		if user_input in current_location.connections:
-			movement_history.push(current_location) # Push the new location to the stack 
-			current_location = current_location.connections[user_input] # Move to the next location 
-		else: 
-			print("Invalid location, please try again.")
+		print(f"Current Loccation: {current_location.description}")
 
 		# Enter special locations with unique interactions here 
 		if current_location == shop: 
-			pass # So i can integrate it 
+			item_wanted = input("What are you looking for in the shop? ").strip() # Asks what the user is looking for 
+			result = search_shop(current_location, item_wanted, player_inventory)
+			print(result) 
 
-	
 		elif current_location == parade: 
+			print("You see a large ship in the sky.\n"
+			"You know the model of the ship and know it has GPS.\n"
+			"You decide to defeat the Alien king and take the ship\n") 
+
 			find_boss() # Call the function to find the boss 
 			space_boss_battle() # Call the function for the space boss battle
 			route_map_challenge() # Call the function for the route map challenge 
+
+			print("You have defeated the Alien King")
+			print("You know can now take the ship anywhere you want")
 	
 		elif current_location == garage and movement_history.peek() == shop: 
 			if police not in current_location.connections.values(): #Check if the police checkpoint is already connected 
@@ -278,11 +277,11 @@ if __name__ == "__main__": # For the GUI to work
 				print("Shortest Route --> Garage -> Police Checkpooint --> Destination")
 	
 		elif current_location == police: 
-			pass # Add unique interaction for police checkpoint 
+			pass
 		
 		elif current_location == destination: 
 			print("Congratulations! You have successfully delivered the package to Brad Cooper on time.")
-			print(" Notification Alert: A message from Boss")
+			print("Notification Alert: A message from Boss")
 			print("Boss: Great job on the delivery! You earned a promotion.")
 			print("Boss: I am throwing a party to celebrate our success, you are invited!")
 			print("Boss: See you at the celebration!")
@@ -296,6 +295,27 @@ if __name__ == "__main__": # For the GUI to work
 			for location in shortest_path: 
 				print(location.name) # Print the names of the locations in the shortest path 
 		
-			game_running = False # End the game loop 
+			break 
+		
+		#Normal connections 
+		elif current_location.choices: #Check if there are choices at the current location 
+			print("Available choices:")
+			for choice in current_location.choices.keys(): 
+				print(f"- {choice}") #Print the choices at the current location
+			user_choice = input("What do you want to do? ").strip() # Get user input for the choice
+			if user_choice in current_location.choices: 
+				print(current_location.choices[user_choice]) # Print the response for the chosen action 
+			else: 
+				print("Invalid choice, please type the choice exactly as shown.") # Print an error message for invalid choice 
+				continue # Skip the rest of the loop and ask for input again 
+		
+		print(f"Available routes: {list(current_location.connections.keys())}") # Print the available routes from the current location 
+	
+		user_input = input("Where do you want to go? ").strip() # Get user input for the next location 
+		if user_input in current_location.connections:
+			movement_history.push(current_location) # Push the new location to the stack 
+			current_location = current_location.connections[user_input] # Move to the next location 
+		else: 
+			print("Invalid location, please try again.")
 	
 #5740479 
