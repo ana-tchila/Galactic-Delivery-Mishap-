@@ -3,16 +3,13 @@ import random
 import time
 import os
 
-
-score = 0 
-
+score = 0
 
 def show_status():
     print("Score:", score)
 
 
 def find_boss():
-   
     global score
 
     print("\nSTAGE 1: FIND THE BOSS")
@@ -27,7 +24,6 @@ def find_boss():
     high = 15
 
     while low <= high:
-
         show_status()
 
         middle = (low + high) // 2
@@ -73,18 +69,13 @@ def find_boss():
 
 
 def space_boss_battle():
-
     global score
 
     print("\nSTAGE 2: SPACE BOSS BATTLE")
 
-    # Possible GPS directions
     directions = ["LEFT", "RIGHT", "UP", "DOWN"]
-
-    # Empty queue
     signals = deque()
 
-    # Add 3 random directions into the queue
     for i in range(3):
         random_signal = random.choice(directions)
         signals.append(random_signal)
@@ -99,7 +90,6 @@ def space_boss_battle():
 
     time.sleep(5)
 
-    # Clear the screen
     if os.name == "nt":
         os.system("cls")
     else:
@@ -128,18 +118,17 @@ def space_boss_battle():
     else:
         print("The Space Boss survived.")
 
-def route_map_challenge():
 
+def route_map_challenge():
     global score
 
     print("\nSTAGE 3: ROUTE MAP CHALLENGE")
 
-    # Open the route map image for the user
     image_path = r"/Users/eman/Desktop/Space_Path (1).png"
 
-    if os.path.exists(image_path):     # Check if the image file exists before trying to open it
+    if os.path.exists(image_path):
         os.system("open " + "'" + image_path + "'")
-    else:     # If the image file does not exist, print a message and provide the route information in text form
+    else:
         print("Image not found. Please check the image name and location.")
         print("\nDo not worry. You can still continue the game using the text map below.")
         print("\nTEXT ROUTE MAP:")
@@ -161,30 +150,21 @@ def route_map_challenge():
         "Destination": {}
     }
 
-    # Data structures used by the algorithm
     costs = {}
     previous = {}
     unvisited = []
 
-    # Initial values
     for place in graph:
         costs[place] = float("inf")
         previous[place] = None
         unvisited.append(place)
 
-    # The start point is Base, so its cost is 0
     costs["Base"] = 0
 
-    # Main search loop
     while unvisited:
-
-        # Find the unvisited place with the lowest current cost
         current = min(unvisited, key=lambda place: costs[place])
-
-        # Remove the current place because it is now being checked
         unvisited.remove(current)
 
-        # Check all neighbours of the current place
         for neighbour in graph[current]:
             new_cost = costs[current] + graph[current][neighbour]
 
@@ -192,7 +172,6 @@ def route_map_challenge():
                 costs[neighbour] = new_cost
                 previous[neighbour] = current
 
-    # Build the best route after the search is finished
     best_route = []
     current = "Destination"
 
@@ -200,7 +179,6 @@ def route_map_challenge():
         best_route.insert(0, current)
         current = previous[current]
 
-    # Route options shown to the user
     route_options = {
         "A": ["Base", "Moon", "Destination"],
         "B": ["Base", "Mars", "Jupiter", "Destination"],
@@ -228,7 +206,6 @@ def route_map_challenge():
         else:
             print("\nWrong answer.")
             print("The best route is:", " -> ".join(best_route))
-
     else:
         print("\nInvalid choice. Please enter A, B, or C.")
 
@@ -236,8 +213,13 @@ def route_map_challenge():
     print("Fuel cost:", costs["Destination"])
     print("Final Score:", score)
 
+
 def main():
     find_boss()
     space_boss_battle()
     route_map_challenge()
+
+
+if __name__ == "__main__":
+    main()
 
