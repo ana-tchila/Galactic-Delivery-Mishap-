@@ -30,17 +30,11 @@ def search(unordered_list, item):
     return None 
 
 
-
-
-
-
 #this class represents the player's inventory and provides methods to add, remove, and check for items. It uses the search function to check if an item is in the inventory.
 
 class inventory:
     def __init__(self):
         self.items = []
-        print("\nInventory created.")
-        print("Your inventory is currently empty.")
         
     def add_item(self, item):
         print("\nAdding item to inventory:", item)
@@ -64,34 +58,27 @@ class inventory:
 
 
 
-
-
-
 # Searching the system 
 
 def search_shop(shop_choices, item_wanted, player_inventory):
-    print("\nYou entered the shop.")
-    print("You are looking for:", item_wanted)
     print("Searching the shop choices...")
 
-    index = search(shop_choices.choices, item_wanted)
+    shop_items = list(shop_choices.items.keys())
+
+    index = search(shop_items, item_wanted)
 
     if index is None:
         print("The item was not found in the shop.")
         return f" You need to look for the '{item_wanted}'"
 
-    offered_item = shop_choices.choices[index]
+    offered_item = shop_items[index]
     print("The shopkeeper found:", offered_item)
 
-    descriptions = shop_item_description.get(offered_item, "Woah buddy, you wish!")
+    descriptions = shop_choices.items.get(offered_item, "Woah buddy, you wish!")
 
-    if offered_item == "Shopkeeper":
-        print("You are talking to the shopkeeper.")
-        return descriptions
-
-    if player_inventory.has(item_wanted):
+    if player_inventory.has(offered_item):
         print("You already have this item.")
-        return f"{descriptions}\nYou don't need {offered_item}."
+        return f"{descriptions}\nYou already have {offered_item}."
 
     print("You do not have this item yet.")
     player_inventory.add_item(offered_item)
