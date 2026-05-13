@@ -3,8 +3,7 @@
 import pygame
 from sys import exit
 from Graph import galaxy, starting, garage, police, diner, shop, parade, destination, celebration, Stack, bfs, make_connections_reciprocal
-from shop_system import create_shop_system
-Inventory, search_shop = create_shop_system()
+from shop_system import search, inventory, search_shop
 
 
 pygame.init()
@@ -109,11 +108,22 @@ def draw_scene(location, choice_buttons, connection_buttons, dialogue=""):
     screen.blit(title_text, (320, 50))
     pygame.draw.rect(screen, (255, 255, 255), (300, 85, 200, 5))
 
-    desc_text = font.render(location.description, False, (255, 255, 255))
-    desc_rect = desc_text.get_rect(center=(400, 200))
-    pygame.draw.rect(screen, (255, 255, 255), (desc_rect.x - 10, desc_rect.y - 10, desc_rect.width + 20, desc_rect.height + 20), 2)
-    screen.blit(desc_text, desc_rect)
+    lines = wrap_text(location.description, font, 700)
+    y = 150
+
+    for line in lines:
+        text_surface = font.render(line, False, (255,255,255))
+        screen.blit(text_surface, (100, y))
+        y += 30
     
+    if dialogue:
+        dialogue_lines = wrap_text(dialogue, font, 700)
+        y += 30
+        for line in dialogue_lines:
+            text_surface = font.render(line, False, (200,255,200))
+            screen.blit(text_surface, (100, y))
+            y += 30
+
     for button in choice_buttons:
         button.draw(screen)
     for button in connection_buttons:
@@ -128,7 +138,7 @@ def draw_shop_scene():
     title_rect = title_text.get_rect(center=(400, 50))
     screen.blit(title_text, title_rect)
 
-    desc_text = wrap_text(shop_description, font, 700)
+    desc_text = wrap_text(shop.description, font, 700)
     y_offset = 150
     for line in desc_text:
         line_surface = font.render(line, False, (255, 255, 255))
@@ -175,7 +185,7 @@ current_screen = "menu"
 current_location = starting
 movement_history = Stack()
 current_dialogue = ""
-player_inventory = Inventory()
+player_inventory = inventory()
 shop_search_text = ""
 shop_search_result = ""
 
@@ -214,16 +224,18 @@ while running:
                             movement_history.push(current_location)
                             current_location = next_location
                             current_dialogue = ""
+                        
                         if current_location == shop:
                             current_screen = "shop"
                             shop_search_result = ""
                             shop_search_text = ""
-            
-            
-            elif current_screen == "shop":
-                if leave_shop_button.is_clicked(event.pos):
-                    current_screen = "game"
-                    shop_search_result = ""
+
+                        elif current_screen == "shop":
+                            if leave_shop_button.is_clicked(event.pos):
+                                current_screen = "game"
+                                current_location = shop
+                                choice_buttons = build_choice_buttons(current_location)
+                                connection_buttons = build_connection_buttons(current_location)            
 
 
     
@@ -239,6 +251,7 @@ while running:
         draw_menu()
     elif current_screen == "game":
         draw_scene(current_location, choice_buttons, connection_buttons, current_dialogue)
-
+    elif current_screen == "shop":
+        draw_shop_scene()
     pygame.display.flip()
     clock.tick(60)
