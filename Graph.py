@@ -18,11 +18,13 @@ class Location:
 	
 	Stores name, description, connections to other locations, 
 	and available actions."""
-	def __init__(self, name: str, description:str): 
+	def __init__(self, name: str, description:str, items: str = None): 
 		self.name = name 
 		self.description = description
 		self.connections = {} #Dictionary to hold the connections (edges) 
+		self.items = items # Optional items that can be found at the location
 		self.choices = {} #Dictionary to hold the choices 
+
 
 	def add_choice(self, choice:str, response:str): 
 		"""Method to add choices to the location's chocie list """
@@ -197,99 +199,102 @@ class Stack:
 
 # User input to start the game and decide if the player wants to play or not 
 
-while True: #Loop for user input 
+if __name__ == "__main__": # For the GUI to work 
+
+	while True: #Loop for user input 
 	
-	response = input(
-	"You are an intergalactic space delivery driver.\n"
-	"You have just received an urgent food order to Roupell Street SE1.\n"  
-	"Are you ready to start the delivery? (yes/no) " 
-	) # Get user input 
+		response = input(
+		"You are an intergalactic space delivery driver.\n"
+		"You have just received an urgent food order to Roupell Street SE1.\n"  
+		"Are you ready to start the delivery? (yes/no) " 
+		) # Get user input 
 	
-	if response.lower().strip() == "yes": # make user input lowercase and remove space 
-		game_running = True 
-		print(
-			"Great! You have accepted the delivery.\n" 
-			"Your GPS is calculating the fastest route.. . .  .\n"
-			"ERROR: GPS CONNECTION LOST.\n" 
-			"You must navigate through the galaxy on your own." 
-		) 
-		break #Exit the loop to start the game 
+		if response.lower().strip() == "yes": # make user input lowercase and remove space 
+			game_running = True 
+			print(
+				"Great! You have accepted the delivery.\n" 
+				"Your GPS is calculating the fastest route.. . .  .\n"
+				"ERROR: GPS CONNECTION LOST.\n" 
+				"You must navigate through the galaxy on your own." 
+			) 
+			break #Exit the loop to start the game 
 		
-	elif response.lower().strip() == "no": 
-		game_running = False 
-		print("The delivery has been assigned to another driver.")
-		break # Exit the loop to end the game
+		elif response.lower().strip() == "no": 
+			game_running = False 
+			print("The delivery has been assigned to another driver.")
+			break # Exit the loop to end the game
 		
-	else: 
-		print("Invalid input, please enter yes or no.") 
+		else: 
+			print("Invalid input, please enter yes or no.") 
 
 
 # Actual game loop 
 #5740479 
 
-current_location = starting # Set the current location to the starting point 
-movement_history = Stack() #Stack to keep track of the movement history 
+	current_location = starting # Set the current location to the starting point 
+	movement_history = Stack() #Stack to keep track of the movement history 
 
-while game_running: 
+
+	while game_running: 
 	
-	print(f"Current location: {current_location.description}") #print the current location name
+		print(f"Current location: {current_location.description}") #print the current location name
 
-	if current_location.choices: #Check if there are choices at the current location 
-		print("Available choices:")
-		for choice in current_location.choices.keys(): 
-			print(f"- {choice}") #Print the choices at the current location
-		user_choice = input("What do you want to do? ").strip() # Get user input for the choice
-		if user_choice in current_location.choices: 
-			print(current_location.choices[user_choice]) # Print the response for the chosen action 
+		if current_location.choices: #Check if there are choices at the current location 
+			print("Available choices:")
+			for choice in current_location.choices.keys(): 
+				print(f"- {choice}") #Print the choices at the current location
+			user_choice = input("What do you want to do? ").strip() # Get user input for the choice
+			if user_choice in current_location.choices: 
+				print(current_location.choices[user_choice]) # Print the response for the chosen action 
+			else: 
+				print("Invalid choice, please type the choice exactly as shown.") # Print an error message for invalid choice 
+				continue # Skip the rest of the loop and ask for input again 
+
+		print(f"Available routes: {list(current_location.connections.keys())}") # Print the available routes from the current location 
+	
+		user_input = input("Where do you want to go? ").strip() # Get user input for the next location 
+		if user_input in current_location.connections:
+			movement_history.push(current_location) # Push the new location to the stack 
+			current_location = current_location.connections[user_input] # Move to the next location 
 		else: 
-			print("Invalid choice, please type the choice exactly as shown.") # Print an error message for invalid choice 
-			continue # Skip the rest of the loop and ask for input again 
+			print("Invalid location, please try again.")
 
-	print(f"Available routes: {list(current_location.connections.keys())}") # Print the available routes from the current location 
-	
-	user_input = input("Where do you want to go? ").strip() # Get user input for the next location 
-	if user_input in current_location.connections:
-		movement_history.push(current_location) # Push the new location to the stack 
-		current_location = current_location.connections[user_input] # Move to the next location 
-	else: 
-		print("Invalid location, please try again.")
-
-	# Enter special locations with unique interactions here 
-	if current_location == shop: 
-		pass # IDK how to do this 
+		# Enter special locations with unique interactions here 
+		if current_location == shop: 
+			pass # IDK how to do this 
 
 	
-	elif current_location == parade: 
-		find_boss() # Call the function to find the boss 
-		space_boss_battle() # Call the function for the space boss battle
-		route_map_challenge() # Call the function for the route map challenge 
+		elif current_location == parade: 
+			find_boss() # Call the function to find the boss 
+			space_boss_battle() # Call the function for the space boss battle
+			route_map_challenge() # Call the function for the route map challenge 
 	
-	elif current_location == garage and movement_history.peek() == shop: 
-		if police not in current_location.connections.values(): #Check if the police checkpoint is already connected 
-			galaxy.add_connection(garage, police, False) # One way connection from garage to police checkpoint 
-			print("Mechanic installed the GPS and it is now working!")
-			print("GPS calculating the fastest route to the destination . . .")
-			print("Shortest Route --> Garage -> Police Checkpooint --> Destination")
+		elif current_location == garage and movement_history.peek() == shop: 
+			if police not in current_location.connections.values(): #Check if the police checkpoint is already connected 
+				galaxy.add_connection(garage, police, False) # One way connection from garage to police checkpoint 
+				print("Mechanic installed the GPS and it is now working!")
+				print("GPS calculating the fastest route to the destination . . .")
+				print("Shortest Route --> Garage -> Police Checkpooint --> Destination")
 	
-	elif current_location == police: 
-		pass # Add unique interaction for police checkpoint 
-	
-	elif current_location == destination: 
-		print("Congratulations! You have successfully delivered the package to Brad Cooper on time.")
-		print(" Notification Alert: A message from Boss")
-		print("Boss: Great job on the delivery! You earned a promotion.")
-		print("Boss: I am throwing a party to celebrate our success, you are invited!")
-		print("Boss: See you at the celebration!")
-    		
-		make_connections_reciprocal() # Make the connections reciprocal for BFS 
-		shortest_path = bfs(destination, celebration) # Find the shortest path to the celebration 
-
-		print("GPS is calculating the fastest route to the celebration .  .  .")
-		print("Shortest path to the celebration:")
-
-		for location in shortest_path: 
-			print(location.name) # Print the names of the locations in the shortest path 
+		elif current_location == police: 
+			pass # Add unique interaction for police checkpoint 
 		
-		game_running = False # End the game loop 
+		elif current_location == destination: 
+			print("Congratulations! You have successfully delivered the package to Brad Cooper on time.")
+			print(" Notification Alert: A message from Boss")
+			print("Boss: Great job on the delivery! You earned a promotion.")
+			print("Boss: I am throwing a party to celebrate our success, you are invited!")
+			print("Boss: See you at the celebration!")
+    		
+			make_connections_reciprocal() # Make the connections reciprocal for BFS 
+			shortest_path = bfs(destination, celebration) # Find the shortest path to the celebration 
+
+			print("GPS is calculating the fastest route to the celebration .  .  .")
+			print("Shortest path to the celebration:")
+
+			for location in shortest_path: 
+				print(location.name) # Print the names of the locations in the shortest path 
+		
+			game_running = False # End the game loop 
 	
 #5740479 
