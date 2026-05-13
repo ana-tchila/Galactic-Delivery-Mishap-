@@ -91,7 +91,8 @@ diner.add_choice("Talk to the old man at the counter", "OLD MAN: You younger gen
 "In the old days we used our brains. Go to the Antique shop, you might find a map. If you can even read it.") 
 garage.add_choice("Talk to the Mechanic", "I am sorry,\n"
 "but we do not have the parts to fix your GPS system. You might want to rest at the diner.")
-
+shop.add_choice("Talk to the Shopkeepr", "Welcome to my humble shop, starngar! \n" 
+"You can find things from all around the universe here!" )
 
 #Adding Nodes to the Graph 
 galaxy.add_location(starting) 
@@ -261,7 +262,7 @@ if __name__ == "__main__": # For the GUI to work
 
 		# Enter special locations with unique interactions here 
 		if current_location == shop: 
-			pass # IDK how to do this 
+			pass # So i can integrate it 
 
 	
 		elif current_location == parade: 
