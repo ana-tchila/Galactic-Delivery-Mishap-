@@ -4,7 +4,8 @@ import time
 import os
 
 
-score = 0
+score = 0 
+
 
 def show_status():
     print("Score:", score)
@@ -71,158 +72,172 @@ def find_boss():
     return False
 
 
-find_boss()
+def space_boss_battle():
 
+    global score
 
-print("\nSTAGE 2: SPACE BOSS BATTLE")
+    print("\nSTAGE 2: SPACE BOSS BATTLE")
 
-# Possible GPS directions
-directions = ["LEFT", "RIGHT", "UP", "DOWN"]
+    # Possible GPS directions
+    directions = ["LEFT", "RIGHT", "UP", "DOWN"]
 
-# Empty queue
-signals = deque()
+    # Empty queue
+    signals = deque()
 
-# Add 3 random directions into the queue
-for i in range(3):
-    random_signal = random.choice(directions)
-    signals.append(random_signal)
+    # Add 3 random directions into the queue
+    for i in range(3):
+        random_signal = random.choice(directions)
+        signals.append(random_signal)
 
-boss_health = 3
+    boss_health = 3
 
-print("SPACE BOSS BATTLE")
-print("Memorise the GPS attack route:")
+    print("SPACE BOSS BATTLE")
+    print("Memorise the GPS attack route:")
 
-for signal in signals:
-    print(signal)
+    for signal in signals:
+        print(signal)
 
-time.sleep(5)
+    time.sleep(5)
 
-# Clear the screen
-if os.name == "nt":
-    os.system("cls")
-else:
-    os.system("clear")
-
-print("Enter the GPS attack route to hit the boss.")
-
-while signals:
-    correct_signal = signals.popleft()
-    answer = input("Enter signal: ").upper().strip()
-
-    if answer == correct_signal:
-        print("Correct hit!")
-        boss_health -= 1
-        score += 1
+    # Clear the screen
+    if os.name == "nt":
+        os.system("cls")
     else:
-        print("Wrong route!")
-        print("The boss blocked your attack.")
-        break
+        os.system("clear")
 
-print("\nBoss health:", boss_health)
-print("Score:", score)
+    print("Enter the GPS attack route to hit the boss.")
 
-if boss_health == 0:
-    print("You defeated the Space Boss!")
-else:
-    print("The Space Boss survived.")
+    while signals:
+        correct_signal = signals.popleft()
+        answer = input("Enter signal: ").upper().strip()
 
+        if answer == correct_signal:
+            print("Correct hit!")
+            boss_health -= 1
+            score += 1
+        else:
+            print("Wrong route!")
+            print("The boss blocked your attack.")
+            break
 
+    print("\nBoss health:", boss_health)
+    print("Score:", score)
 
-print("\nSTAGE 3: ROUTE MAP CHALLENGE")
-
-# Open the route map image for the user
-image_path = r"/Users/eman/Desktop/Space_Path (1).png"
-
-if os.path.exists(image_path):
-    os.system("open " + "'" + image_path + "'")
-else:
-    print("Image not found. Please check the image name and location.")
-
-
-graph = {
-    "Base": {"Moon": 4, "Mars": 5},
-    "Moon": {"Destination": 8},
-    "Mars": {"Jupiter": 3, "Venus": 6},
-    "Jupiter": {"Destination": 2},
-    "Venus": {"Destination": 4},
-    "Destination": {}
-}
-
-
-# Data structures used by the algorithm
-costs = {}
-previous = {}
-unvisited = []
-
-# Initial values
-for place in graph:
-    costs[place] = float("inf")
-    previous[place] = None
-    unvisited.append(place)
-
-# The start point is Base, so its cost is 0
-costs["Base"] = 0
-
-
-# Main search loop
-while unvisited:
-
-    # Find the unvisited place with the lowest current cost
-    current = min(unvisited, key=lambda place: costs[place])
-
-    # Remove the current place because it is now being checked
-    unvisited.remove(current)
-
-    # Check all neighbours of the current place
-    for neighbour in graph[current]:
-        new_cost = costs[current] + graph[current][neighbour]
-
-        if new_cost < costs[neighbour]:
-            costs[neighbour] = new_cost
-            previous[neighbour] = current
-
-
-# Build the best route after the search is finished
-best_route = []
-current = "Destination"
-
-while current is not None:
-    best_route.insert(0, current)
-    current = previous[current]
-
-
-# Route options shown to the user
-route_options = {
-    "A": ["Base", "Moon", "Destination"],
-    "B": ["Base", "Mars", "Jupiter", "Destination"],
-    "C": ["Base", "Mars", "Venus", "Destination"]
-}
-
-print("\nRoute Map Challenge")
-print("Look at the map and choose the best route.")
-
-print("\nA. Base -> Moon -> Destination")
-print("B. Base -> Mars -> Jupiter -> Destination")
-print("C. Base -> Mars -> Venus -> Destination")
-
-answer = input("\nEnter A, B, or C: ").upper().strip()
-
-if answer in route_options:
-    user_route = route_options[answer]
-
-    if user_route == best_route:
-        score += 1
-        print("\nCorrect! You chose the best route.")
-        print("You gained 1 point.")
+    if boss_health == 0:
+        print("You defeated the Space Boss!")
     else:
-        print("\nWrong answer.")
-        print("The best route is:", " -> ".join(best_route))
+        print("The Space Boss survived.")
 
-else:
-    print("\nInvalid choice. Please enter A, B, or C.")
+def route_map_challenge():
 
+    global score
 
-print("\nBest route:", " -> ".join(best_route))
-print("Fuel cost:", costs["Destination"])
-print("Final Score:", score)
+    print("\nSTAGE 3: ROUTE MAP CHALLENGE")
+
+    # Open the route map image for the user
+    image_path = r"/Users/eman/Desktop/Space_Path (1).png"
+
+    if os.path.exists(image_path):     # Check if the image file exists before trying to open it
+        os.system("open " + "'" + image_path + "'")
+    else:     # If the image file does not exist, print a message and provide the route information in text form
+        print("Image not found. Please check the image name and location.")
+        print("\nDo not worry. You can still continue the game using the text map below.")
+        print("\nTEXT ROUTE MAP:")
+        print("Base -> Moon = 4")
+        print("Base -> Mars = 5")
+        print("Moon -> Destination = Base -> Mars plus 3")
+        print("Mars -> Jupiter = Half of Mars -> Venus")
+        print("Mars -> Venus = 6")
+        print("Venus -> Destination = Same as Base -> Moon")
+        print("Jupiter -> Destination = missing fuel cost")
+        print("\nClue: The best route total fuel cost is 10.")
+
+    graph = {
+        "Base": {"Moon": 4, "Mars": 5},
+        "Moon": {"Destination": 8},
+        "Mars": {"Jupiter": 3, "Venus": 6},
+        "Jupiter": {"Destination": 2},
+        "Venus": {"Destination": 4},
+        "Destination": {}
+    }
+
+    # Data structures used by the algorithm
+    costs = {}
+    previous = {}
+    unvisited = []
+
+    # Initial values
+    for place in graph:
+        costs[place] = float("inf")
+        previous[place] = None
+        unvisited.append(place)
+
+    # The start point is Base, so its cost is 0
+    costs["Base"] = 0
+
+    # Main search loop
+    while unvisited:
+
+        # Find the unvisited place with the lowest current cost
+        current = min(unvisited, key=lambda place: costs[place])
+
+        # Remove the current place because it is now being checked
+        unvisited.remove(current)
+
+        # Check all neighbours of the current place
+        for neighbour in graph[current]:
+            new_cost = costs[current] + graph[current][neighbour]
+
+            if new_cost < costs[neighbour]:
+                costs[neighbour] = new_cost
+                previous[neighbour] = current
+
+    # Build the best route after the search is finished
+    best_route = []
+    current = "Destination"
+
+    while current is not None:
+        best_route.insert(0, current)
+        current = previous[current]
+
+    # Route options shown to the user
+    route_options = {
+        "A": ["Base", "Moon", "Destination"],
+        "B": ["Base", "Mars", "Jupiter", "Destination"],
+        "C": ["Base", "Mars", "Venus", "Destination"]
+    }
+
+    print("\nRoute Map Challenge")
+    print("Look at the image map if it opened.")
+    print("If the image did not open, use the text route map shown above.")
+    print("Choose the route with the lowest fuel cost.")
+
+    print("\nA. Base -> Moon -> Destination")
+    print("B. Base -> Mars -> Jupiter -> Destination")
+    print("C. Base -> Mars -> Venus -> Destination")
+
+    answer = input("\nEnter A, B, or C: ").upper().strip()
+
+    if answer in route_options:
+        user_route = route_options[answer]
+
+        if user_route == best_route:
+            score += 1
+            print("\nCorrect! You chose the best route.")
+            print("You gained 1 point.")
+        else:
+            print("\nWrong answer.")
+            print("The best route is:", " -> ".join(best_route))
+
+    else:
+        print("\nInvalid choice. Please enter A, B, or C.")
+
+    print("\nBest route:", " -> ".join(best_route))
+    print("Fuel cost:", costs["Destination"])
+    print("Final Score:", score)
+
+def main():
+    find_boss()
+    space_boss_battle()
+    route_map_challenge()
 
