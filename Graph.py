@@ -21,14 +21,18 @@ class Location:
 	def __init__(self, name: str, description:str, items: str = None): 
 		self.name = name 
 		self.description = description
-		self.connections = {} #Dictionary to hold the connections (edges) 
-		self.items = items # Optional items that can be found at the location
+		self.connections = {} #Dictionary to hold the connections (edges)
 		self.choices = {} #Dictionary to hold the choices 
-
+		self.items = {} #Items that can be found at the Antique Shop 
+		
 
 	def add_choice(self, choice:str, response:str): 
-		"""Method to add choices to the location's chocie list """
+		"""Adds a player interaction choice to the location"""
 		self.choices[choice] = response #adds the choice and its response to the dictionary
+	
+	def add_item(self, item: str, description:str): 
+		"Adds a item and description to the location"
+		self.items[item] = description # adds the items and its description to the dictionary 
 		
 #Graph that the user will be traversing 
 
@@ -91,8 +95,15 @@ diner.add_choice("Talk to the old man at the counter", "OLD MAN: You younger gen
 "In the old days we used our brains. Go to the Antique shop, you might find a map. If you can even read it.") 
 garage.add_choice("Talk to the Mechanic", "I am sorry,\n"
 "but we do not have the parts to fix your GPS system. You might want to rest at the diner.")
-shop.add_choice("Talk to the Shopkeepr", "Welcome to my humble shop, starngar! \n" 
-"You can find things from all around the universe here!" )
+shop.add_choice("Talk to the Shopkeepr", "Welcome to my humble shop, stranger! \n" 
+"You can find the GPS you are searching for somewhere in my shop")
+
+#Adding the items 
+shop.add_item("GPS", "It looks old and rusty, but it works like it is new")
+shop.add_item("Raygun", "A buddy from your planet with a funny accent sold me this weapon.\n" 
+"He told me it is one of his best creations.") 
+shop.add_item("Cap", "This is such an antique, back from the time when people lived on Earth.")
+shop.add_item("Gloop", "Do not shake it")
 
 #Adding Nodes to the Graph 
 galaxy.add_location(starting) 
