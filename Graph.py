@@ -7,7 +7,7 @@ import random
 import time
 import os
 from boss_game import find_boss, space_boss_battle, route_map_challenge
-from shop_system import create_shop_system
+from shop_system import inventory, search_shop 
 
 #Graph Node 
 
@@ -273,7 +273,7 @@ if __name__ == "__main__": # For the GUI to work
 		
 		# Enter special locations with unique interactions here 
 		if current_location == shop: 
-			pass # So i can integrate it 
+			
 
 	
 		elif current_location == parade: 
