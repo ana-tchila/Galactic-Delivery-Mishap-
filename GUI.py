@@ -4,6 +4,9 @@ import pygame
 from sys import exit
 from Graph import galaxy, starting, garage, police, diner, shop, parade, destination, celebration, Stack, bfs, make_connections_reciprocal
 from shop_system import create_shop_system
+Inventory, search_shop = create_shop_system()
+
+
 pygame.init()
 pygame.mixer.init()
 screen = pygame.display.set_mode((800, 600))
@@ -118,6 +121,44 @@ def draw_scene(location, choice_buttons, connection_buttons, dialogue=""):
     
     draw_inventory(player_inventory)
 
+def draw_shop_scene():
+    screen.fill((0, 0, 0))
+
+    title_text = title_font.render("Shop", False, (255, 255, 255))
+    title_rect = title_text.get_rect(center=(400, 50))
+    screen.blit(title_text, title_rect)
+
+    desc_text = wrap_text(shop_description, font, 700)
+    y_offset = 150
+    for line in desc_text:
+        line_surface = font.render(line, False, (255, 255, 255))
+        line_rect = line_surface.get_rect(center=(400, y_offset))
+        screen.blit(line_surface, line_rect)
+        y_offset += 40
+    prompt_text = font.render("What do you want to buy?", False, (255, 255, 255))
+    prompt_rect = prompt_text.get_rect(center=(400, y_offset + 20))
+    screen.blit(prompt_text, prompt_rect)
+
+    input_box = pygame.Rect(300, y_offset + 60, 200, 40)
+    pygame.draw.rect(screen, (255, 255, 255), input_box, 2)
+
+    hint_text = font.render("type and press Enter", False, (255, 255, 255))
+    hint_rect = hint_text.get_rect(center=(400, y_offset + 110))
+    screen.blit(hint_text, hint_rect)
+
+    if shop_search_result:
+        result = wrap_text(shop_search_result, font, 700)
+        result_y = y_offset + 150
+
+        for line in result:
+            line_surface = font.render(line, False, (255, 255, 255))
+            line_rect = line_surface.get_rect(center=(400, result_y))
+            screen.blit(line_surface, line_rect)
+            result_y += 40
+
+    leave_shop_button.draw(screen)
+    draw_inventory(player_inventory)
+
 
 def draw_inventory(inventory):
     pygame.draw.rect(screen, (255, 255, 255), (50, 400, 200, 150))
@@ -134,7 +175,11 @@ current_screen = "menu"
 current_location = starting
 movement_history = Stack()
 current_dialogue = ""
-player_inventory = inventory()
+player_inventory = Inventory()
+shop_search_text = ""
+shop_search_result = ""
+
+leave_shop_button = Button(300, 500, 200, 50, "Leave Shop")
 choice_buttons = build_choice_buttons(current_location)
 connection_buttons = build_connection_buttons(current_location)
 
@@ -169,8 +214,23 @@ while running:
                             movement_history.push(current_location)
                             current_location = next_location
                             current_dialogue = ""
-                            choice_buttons = build_choice_buttons(current_location)
-                            connection_buttons = build_connection_buttons(current_location)
+                        if current_location == shop:
+                            current_screen = "shop"
+                            shop_search_result = ""
+                            shop_search_text = ""
+            
+            
+            elif current_screen == "shop":
+                if leave_shop_button.is_clicked(event.pos):
+                    current_screen = "game"
+                    shop_search_result = ""
+
+
+    
+
+
+            choice_buttons = build_choice_buttons(current_location)
+            connection_buttons = build_connection_buttons(current_location)
                             
 
 
