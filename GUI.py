@@ -3,8 +3,7 @@
 import pygame
 from sys import exit
 from Graph import galaxy, starting, garage, police, diner, shop, parade, destination, celebration, Stack, bfs, make_connections_reciprocal
-from shop_system import Inventory, search, search_shop
-
+from shop_system import create_shop_system
 pygame.init()
 pygame.mixer.init()
 screen = pygame.display.set_mode((800, 600))
@@ -135,7 +134,7 @@ current_screen = "menu"
 current_location = starting
 movement_history = Stack()
 current_dialogue = ""
-player_inventory = Inventory()
+player_inventory = inventory()
 choice_buttons = build_choice_buttons(current_location)
 connection_buttons = build_connection_buttons(current_location)
 
