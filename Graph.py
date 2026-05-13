@@ -80,7 +80,7 @@ garage = Location( 'Garage', 'Shell plc gas station, where people can refuel and
 police = Location( 'Police check point', 'A checkpoint is ahead - you need to show your driver license to pass through') 
 diner = Location( 'Diner', 'A Diner that offers more food: community') 
 shop = Location( 'Antique Shop', 'Every item has its use - find what is useful for you') 
-parade = Location( 'Alien Parade', 'Fun like you have never experienced before, join the alien king on his ship')
+parade = Location( 'Alien Parade', 'You have deleted the Alien King and overtaken his ship. Now you can head to the Destination.')
 destination = Location( 'Roupell Street SE1', 'House of Brad Cooper') 
 celebration = Location( 'Celebration', 'You made it to Brad Copper on time. Time for a promotion and well deserved party')
 
@@ -237,8 +237,8 @@ if __name__ == "__main__": # For the GUI to work
 
 
 	while game_running: 
-	
-		print(f"Current location: {current_location.description}") #print the current location name
+
+		print(f"Current Loccation: {current_location.description}")
 
 		if current_location.choices: #Check if there are choices at the current location 
 			print("Available choices:")
@@ -259,13 +259,17 @@ if __name__ == "__main__": # For the GUI to work
 			current_location = current_location.connections[user_input] # Move to the next location 
 		else: 
 			print("Invalid location, please try again.")
-
+		
 		# Enter special locations with unique interactions here 
 		if current_location == shop: 
 			pass # So i can integrate it 
 
 	
 		elif current_location == parade: 
+			print(" You see a large ship in the sky.\n"
+			"You know the model of the ship and know it has GPS.\n"
+			"You decide to defeat the boss and take the ship\n") 
+
 			find_boss() # Call the function to find the boss 
 			space_boss_battle() # Call the function for the space boss battle
 			route_map_challenge() # Call the function for the route map challenge 
