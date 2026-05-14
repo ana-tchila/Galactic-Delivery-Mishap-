@@ -108,17 +108,19 @@ def draw_scene(location, choice_buttons, connection_buttons, dialogue=""):
     screen.blit(title_text, (320, 50))
     pygame.draw.rect(screen, (255, 255, 255), (300, 85, 200, 5))
 
-    lines = wrap_text(location.description, font, 700)
+    desc = wrap_text(location.description, font, 700)
     y = 150
 
-    for line in lines:
+    for line in desc:
         text_surface = font.render(line, False, (255,255,255))
         screen.blit(text_surface, (100, y))
         y += 30
     
-    if dialogue:
+    if dialogue != "":
         dialogue_lines = wrap_text(dialogue, font, 700)
-        y += 30
+
+        y += 20  # small gap
+
         for line in dialogue_lines:
             text_surface = font.render(line, False, (200,255,200))
             screen.blit(text_surface, (100, y))
@@ -211,7 +213,8 @@ while running:
                 for button in choice_buttons:
                     if button.is_clicked(event.pos):
                         choice_text = button.text
-                        current_dialogue = current_location.choices[choice_text]
+                        current_location = next_location
+                        current_dialogue = ""
                         choice_buttons = []
                         connection_buttons = build_connection_buttons(current_location)
                         break
@@ -223,7 +226,7 @@ while running:
                             next_location = current_location.connections[dest_name]
                             movement_history.push(current_location)
                             current_location = next_location
-                            current_dialogue = ""
+                            current_dialogue = current_location.description[choice_text]
                         
                         if current_location == shop:
                             current_screen = "shop"
@@ -234,8 +237,16 @@ while running:
                             if leave_shop_button.is_clicked(event.pos):
                                 current_screen = "game"
                                 current_location = shop
-                                choice_buttons = build_choice_buttons(current_location)
-                                connection_buttons = build_connection_buttons(current_location)            
+                            if event.type == pygame.KEYDOWN:
+                                if event.key == pygame.K_RETURN:
+                                    shop_search_result = search_shop(shop_search_text)
+                                    shop_search_text = ""
+                                elif event.key == pygame.K_BACKSPACE:
+                                    shop_search_text = shop_search_text[:-1]
+                                else:
+                                    shop_search_text += event.unicode
+                            choice_buttons = build_choice_buttons(current_location)
+                            connection_buttons = build_connection_buttons(current_location)            
 
 
     
