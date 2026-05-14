@@ -116,7 +116,7 @@ def generate_licence():
     return random.randint(10000, 99999) # Generates random 5 digit numbers 
 
 #Generates 10 licences 
-all_licences = [generate_licence for i in range(10)] 
+all_licences = [generate_licence() for i in range(10)] 
 
 #Choose 5 Licences to be valid 
 valid_licences = random.sample(all_licences, 5) 
@@ -126,7 +126,7 @@ for licence in valid_licences:
     licence_filter.add(licence) 
 
 #Assigns the player one random licence 
-player.licence = random.choice(all_licences)
+player_licence = random.choice(all_licences)
 
 def police_scan(licence): 
     """Checks if a licence is valid"""
@@ -134,4 +134,4 @@ def police_scan(licence):
     if licence_filter.check(licence): 
         return "Let the driver pass"
     else: 
-        return "Acces denied"
+        return "Acces denied" 
