@@ -219,7 +219,3 @@ def main():
     space_boss_battle()
     route_map_challenge()
 
-
-if __name__ == "__main__":
-    main()
-
