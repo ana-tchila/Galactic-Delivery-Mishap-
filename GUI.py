@@ -5,7 +5,7 @@ import random
 
 import pygame
 from sys import exit
-from Graph import galaxy, starting, garage, police, diner, shop, parade, destination, celebration, Stack, bfs, make_connections_reciprocal
+from Graph import galaxy, starting, garage, diner, police, shop, parade, destination, celebration, Stack, bfs, make_connections_reciprocal
 from shop_system import search, inventory, search_shop
 
 
