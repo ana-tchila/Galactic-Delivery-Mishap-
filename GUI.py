@@ -226,7 +226,7 @@ while running:
                             next_location = current_location.connections[dest_name]
                             movement_history.push(current_location)
                             current_location = next_location
-                            current_dialogue = current_location.description[choice_text]
+                            current_dialogue = ""
                         
                         if current_location == shop:
                             current_screen = "shop"
