@@ -29,8 +29,8 @@ class BloomFilter(object):
 
         # Size of the bit array needed 
         self.size = self.get_size(items_count, fp_prob)
-        self.bitarray = bitarray(self.size) #Creates the bit array 
-        self.bitarray.setall(0) # Set all the bits to zero 
+        self.bit_array = bitarray(self.size) #Creates the bit array 
+        self.bit_array.setall(0) # Set all the bits to zero 
 
         #Number of hash function needed 
         self.hash_count = self.get_hash_count(self.size, items_count) 
@@ -108,18 +108,17 @@ class BloomFilter(object):
 #print(BloomFilter.get_size(10, 0.01)) 
 #print(BloomFilter.get_hash_count(95, 10))
 
-licence_filter = BloomFilter(len(valid_licences), 0.01) #Make an instance 
-
 def generate_licence(): 
     """Generates a random 5-digit licence."""
 
-    return random.randint(10000, 99999) # Generates random 5 digit numbers 
+    return str(random.randint(10000, 99999)) # Generates random 5 digit numbers 
 
 #Generates 10 licences 
-all_licences = [generate_licence() for i in range(10)] 
+all_licences = [generate_licence() for i in range(10)]
 
 #Choose 5 Licences to be valid 
 valid_licences = random.sample(all_licences, 5) 
+licence_filter = BloomFilter(len(valid_licences), 0.01) #Make an instance 
 
 #Add only the valid licenses into the Bloom Filter 
 for licence in valid_licences: 
@@ -134,4 +133,7 @@ def police_scan(licence):
     if licence_filter.check(licence): 
         return "Let the driver pass"
     else: 
-        return "Acces denied" 
+        return "Access denied" 
+
+#Test run 
+#print(police_scan(player_licence))
