@@ -8,6 +8,7 @@ import time
 import os
 from boss_game import find_boss, space_boss_battle, route_map_challenge
 from shop_system import inventory, search_shop 
+from police_station import police_scan, player_licence
 
 #Graph Node 
 
@@ -275,10 +276,25 @@ if __name__ == "__main__": # For the GUI to work
 				print("Mechanic installed the GPS and it is now working!")
 				print("GPS calculating the fastest route to the destination . . .")
 				print("Shortest Route --> Garage -> Police Checkpooint --> Destination")
-	
+
+				current_location = police # Moves the player to the police station 
+				continue #Skips the rest of the loop 
+
 		elif current_location == police: 
-			pass
-		
+			print("POLICE CHECKPOINT")
+			print("Officer: Show your licence")
+
+			print(f"Here is my licence: {player_licence}")
+			
+			result = police_scan(player_licence)
+
+			if result == "Access Denied": 
+				print("GAME OVER")
+				print("You were arrested for using and invalid licence")
+				break #Terminate the loop 
+			else: 
+				print("Access Granted to pass")
+
 		elif current_location == destination: 
 			print("Congratulations! You have successfully delivered the package to Brad Cooper on time.")
 			print("Notification Alert: A message from Boss")
@@ -294,8 +310,8 @@ if __name__ == "__main__": # For the GUI to work
 
 			for location in shortest_path: 
 				print(location.name) # Print the names of the locations in the shortest path 
-		
-			break 
+			
+			break # Terminate the loop 
 		
 		#Normal connections 
 		elif current_location.choices: #Check if there are choices at the current location 
