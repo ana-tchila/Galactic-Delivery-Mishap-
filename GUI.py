@@ -294,11 +294,12 @@ def draw_find_boss():
     for i in range(1, 16):
         button = Button(50 + (i - 1) * 50, 350, 40, 40, str(i))
         button.draw(screen)
+        door_buttons.append(button)
 
     return door_buttons
 
 def click_door( door_number):
-    global search_low, search_high, boss_message
+    global search_low, search_high, boss_message, current_screen
     if door_number == boss_door:
         boss_message = "You found the boss! You win!"
         won = True
@@ -311,7 +312,7 @@ def click_door( door_number):
         boss_message = f"The boss is behind a lower numbered door. Search between {search_low} and {search_high}."
     
 
-def signal_sequence():
+def draw_signal_sequence():
     global current_screen, signal_message, boss_health, sequence_show_time
     screen.fill((0, 0, 0))
 
@@ -537,7 +538,7 @@ boss_door = 0
 search_low = 1
 search_high = 15
 boss_message = ""
-attack_siganls = deque()
+signal_sequence = deque()
 siganls_remaining = deque()
 score = 0
 attack_message = ""
