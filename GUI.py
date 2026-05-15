@@ -116,11 +116,7 @@ def get_visible_routes(location):
     elif location == garage:
         if not movement_history.peek() == shop:
             return [diner.name]
-<<<<<<< HEAD
         elif movement_history.peek() and gps_installed: 
-=======
-        elif gps_installed:
->>>>>>> 38cabec0ece8a84ae56cbb92db1cb4d48a975d23
             return [police.name]
     elif location == police:
         return [destination.name]
@@ -350,14 +346,7 @@ def draw_find_boss():
         door_buttons.append(button)
 
     return door_buttons
-<<<<<<< HEAD
-    
-=======
-###############
-# 5740479
 
-
->>>>>>> 38cabec0ece8a84ae56cbb92db1cb4d48a975d23
 def click_door(door_number):
     global search_low, search_high, boss_message, current_screen
 
@@ -371,7 +360,7 @@ def click_door(door_number):
     # Correct door found
     elif door_number == boss_door:
         boss_message = ("You found the boss")
-<<<<<<< HEAD
+
         draw_signal_sequence()
         return 
     
@@ -390,29 +379,9 @@ def click_door(door_number):
         f"Search between {search_low} and {search_high}"
         )
         return 
-=======
+
         draw_signal_sequence
         return
-
-    # Behind lower value door
-    elif door_number > boss_door:
-        search_high = middle_search - 1
-        boss_message = ("You must pick a lower value door.\n"
-                        f"Search between {search_low} and {search_high}"
-                        )
-        return
-
-    # Behind higher value door
-    else:
-        search_low = middle_search + 1
-        boss_message = ("You must pick a higher value door.\n"
-                        f"Search between {search_low} and {search_high}"
-                        )
-        return
-# 5740479
-#############
-
->>>>>>> 38cabec0ece8a84ae56cbb92db1cb4d48a975d23
 
 def draw_signal_sequence():
     global current_screen, signal_message, boss_health, sequence_show_time
@@ -640,7 +609,7 @@ def click_route_option(option):
 def draw_police_screen(): 
     screen.fill((0,0,0)) #Fill screen
 
-<<<<<<< HEAD
+
     title_text = title_font.render("Police Checkpoint", False, (255, 255, 255))
     title_rect = title_text.get_rect(center=(400,100)) 
     screen.blit(title_text, title_rect) #Draws title text on the rectangle 
@@ -655,8 +624,6 @@ def draw_police_screen():
     #Scan button to process the licence
     scan_button.draw(screen)
 
-=======
->>>>>>> 38cabec0ece8a84ae56cbb92db1cb4d48a975d23
 current_screen = "menu"
 current_location = starting
 movement_history = Stack()
@@ -664,10 +631,6 @@ current_dialogue = ""
 player_inventory = inventory()
 shop_search_text = ""
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 38cabec0ece8a84ae56cbb92db1cb4d48a975d23
 gps_installed = False
 end_message = ""
 
@@ -753,11 +716,7 @@ def travel_to(location):
             "Items available: Raygun, GPS, Cap, Gloop"
         )
         return
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> 38cabec0ece8a84ae56cbb92db1cb4d48a975d23
     if current_location == garage and previous_location == shop:
         if player_inventory.has("GPS"):
             gps_installed = True
@@ -776,7 +735,6 @@ def travel_to(location):
                            )
             current_screen = "ended_lose"
         return
-<<<<<<< HEAD
     
     if current_location == police: 
         current_screen = "police"
@@ -784,8 +742,6 @@ def travel_to(location):
         "Officer: Show your licence"
         )
         return 
-=======
->>>>>>> 38cabec0ece8a84ae56cbb92db1cb4d48a975d23
 
     if current_location == destination:
         if player_inventory.has("GPS"):
@@ -895,7 +851,6 @@ while running:
                 if leave_shop_button.is_clicked(event.pos):
                     current_screen = "location"
                     current_dialogue = ""
-<<<<<<< HEAD
                 
             elif current_screen == "police": 
                 
@@ -927,9 +882,6 @@ while running:
                         # Terminate the game 
                         current_screen = "ended_lose"
             
-=======
-
->>>>>>> 38cabec0ece8a84ae56cbb92db1cb4d48a975d23
             elif current_screen == "find_boss":
                 door_buttons = draw_find_boss()
                 for button in door_buttons:
