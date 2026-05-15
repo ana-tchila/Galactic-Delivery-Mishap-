@@ -93,22 +93,21 @@ def draw_inventory_bar():
     screen.blit(text_surface, (10, 565))
 
 
-
 def get_visible_routes(location):
     if location == starting:
-        return [garage.name, police.name]
+        return [garage.name, diner.name]
     elif location == diner:
         return [shop.name, parade.name]
     elif location == shop:
         return [garage.name]
     elif location == garage:
-        if gps_installed:
+        if not gps_installed:
+            return [diner.name]
+        elif gps_installed: 
             return [police.name]
-        return [diner.name]
     elif location == police:
         return [destination.name]
     return []
-
 
 def get_visible_choices(location):
     if location == garage and gps_installed:
@@ -116,7 +115,6 @@ def get_visible_choices(location):
     if location in (parade, destination, celebration, police):
         return []
     return list(location.choices.keys())
-
 
 def draw_menu():
     screen.fill((0, 0, 0))
@@ -143,7 +141,7 @@ def draw_intro():
         "You must navigate through the galaxy on your own."
     )
 
-    render_text_block(intro, 50, 110, 700, font)
+    render_text_block(intro, 220, 210, 700, font)
     continue_button.draw(screen)
 
 
@@ -192,8 +190,6 @@ def draw_choice_screen():
     for button in choice_buttons:
         button.draw(screen)
     draw_inventory_bar()
-
-
 
 def draw_route_screen():
     screen.fill((0, 0, 0))
@@ -246,7 +242,6 @@ def draw_shop_scene():
     hint_text = font.render("type and press Enter", False, (255, 255, 255))
     screen.blit(hint_text, (50, 385))
 
-
     leave_shop_button.draw(screen)
     draw_inventory_bar()
 
@@ -278,7 +273,6 @@ def begin_find_boss():
     search_high = 15
     boss_message = "You enter the building and see 15 doors. The boss is behind one of them. Which one do you choose?"
 
-
 def draw_find_boss():
     screen.fill((0, 0, 0))
     title_text = title_font.render("Find the Boss", False, (255, 255, 255))
@@ -292,25 +286,45 @@ def draw_find_boss():
     render_text_block(boss_message, panel.x + 15, panel.y + 15, panel.width - 30, font)
     door_buttons = []
     for i in range(1, 16):
-        button = Button(50 + (i - 1) * 50, 350, 40, 40, str(i))
+        button = Button(30 + (i - 1) * 50, 450, 40, 40, str(i))
         button.draw(screen)
         door_buttons.append(button)
 
     return door_buttons
 
-def click_door( door_number):
+#5740479 
+def click_door(door_number):
     global search_low, search_high, boss_message, current_screen
-    if door_number == boss_door:
-        boss_message = "You found the boss! You win!"
-        won = True
-        current_screen = "ending"
-    elif door_number < boss_door:
-        search_low = max(search_low, door_number + 1)
-        boss_message = f"The boss is behind a higher numbered door. Search between {search_low} and {search_high}."
-    else:
-        search_high = min(search_high, door_number - 1)
-        boss_message = f"The boss is behind a lower numbered door. Search between {search_low} and {search_high}."
+
+    middle_search = (search_high + search_low) // 2 # Get the middle value 
+
+    #Force player to choose the middle door 
+    if door_number != middle_search: 
+        boss_message = (f"You have to pick the middle door: {middle_search}")
+        return 
     
+    # Correct door found 
+    elif door_number == boss_door: 
+        boss_message = ("You found the boss")
+        draw_signal_sequence
+        return 
+    
+    #Behind lower value door 
+    elif door_number > boss_door: 
+        search_high = middle_search - 1 
+        boss_message =("You must pick a lower value door.\n"  
+        f"Search between {search_low} and {search_high}"
+        )
+        return 
+    
+    #Behind higher value door
+    else: 
+        search_low = middle_search + 1 
+        boss_message = ("You must pick a higher value door.\n"  
+        f"Search between {search_low} and {search_high}"
+        )
+        return 
+#5740479 
 
 def draw_signal_sequence():
     global current_screen, signal_message, boss_health, sequence_show_time
@@ -580,7 +594,7 @@ def build_choice_buttons(location):
     choices = get_visible_choices(location)
     for i, choice in enumerate(choices):
         x = (800 - 600) // 2
-        y = 440 + i * 55
+        y = 420 + i * 55
         buttons.append(Button(x, y, 600, 45, choice))
     return buttons
 
@@ -589,10 +603,9 @@ def build_route_buttons(location):
     routes = get_visible_routes(location)
     for i, route in enumerate(routes):
         x = (800 - 700) // 2
-        y = 440 + i * 60
+        y = 410 + i * 60
         buttons.append(Button(x, y, 700, 50, f"Go to {route}"))
     return buttons
-
 
 def travel_to(location):
     global current_location, current_screen, current_dialogue
@@ -613,7 +626,8 @@ def travel_to(location):
         current_screen = "shop"
         current_dialogue = (
             "Welcome to my humble shop, stranger! "
-            "Type the name of an item to search for it."
+            "Type the name of an item to search for it.\n"
+            "Items available: Raygun, GPS, Cap, Gloop" # We don't need the small items available box 
         )
         return
     
