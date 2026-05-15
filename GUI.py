@@ -788,7 +788,7 @@ while running:
             
             elif current_screen in ("ended_win", "ended_lose"):
                 if restart_button.is_clicked(event.pos):
-                    # Reset game state
+                    
                     current_screen = "menu"
                     current_location = starting
                     movement_history = Stack()
