@@ -519,7 +519,7 @@ def click_route_option(option):
 
 
 
-#game state variables
+
 current_screen = "menu"
 current_location = starting
 movement_history = Stack()
@@ -528,11 +528,11 @@ player_inventory = inventory()
 shop_search_text = ""
 
 
-#game progress flags
+
 gps_installed = False
 end_message = ""
 
-#boss battle variables
+
 boss_health = 3
 boss_door = 0
 search_low = 1
@@ -547,7 +547,7 @@ optimal_route = []
 optimal_cost = 0
 route_map_message = ""
 
-# Buttons
+
 start_button = Button(300, 400, 200, 50, "Start Game")
 continue_button = Button(300, 470, 200, 50, "Continue")
 leave_shop_button = Button(560, 395, 200, 40, "Leave Shop")
@@ -558,7 +558,7 @@ talk_button = Button(120, 460, 230, 60, "Talk / Search")
 travel_button = Button(450, 460, 230, 60, "Choose Route")
 proceed_button = Button(300, 460, 200, 60, "Continue")
 
-#button builders
+
 def build_action_buttons(location):
     buttons = []
     has_choices = get_visible_choices(location)
@@ -603,12 +603,12 @@ def travel_to(location):
     current_location = location
     current_dialogue = ""
     
-    # Entering the parade → trigger boss battle
+    
     if current_location == parade:
         begin_find_boss()
         return
     
-    # Entering the shop → switch to shop screen
+    
     if current_location == shop:
         current_screen = "shop"
         current_dialogue = (
@@ -617,7 +617,7 @@ def travel_to(location):
         )
         return
     
-    # Returning to garage AFTER visiting shop → mechanic installs GPS
+    
     if current_location == garage and previous_location == shop:
         gps_installed = True
         current_dialogue = (
@@ -628,7 +628,7 @@ def travel_to(location):
         current_screen = "location"
         return
     
-    # Reaching destination → check win condition
+    
     if current_location == destination:
         if player_inventory.has("GPS"):
             # Use BFS to find path to celebration as the algorithm showcase
@@ -651,7 +651,7 @@ def travel_to(location):
             current_screen = "ended_lose"
         return
     
-    # Reaching celebration → win the game
+    
     if current_location == celebration:
         end_message = (
             "You made it to the celebration party!\n\n"
@@ -661,10 +661,10 @@ def travel_to(location):
         current_screen = "ended_win"
         return
     
-    # Default — show the new location's main screen
+    
     current_screen = "location"
 
-#Main game loop
+
 while running:
     
     action_buttons = build_action_buttons(current_location)
@@ -676,7 +676,7 @@ while running:
             pygame.quit()
             exit()
         
-        # === KEYBOARD INPUT (shop search bar only) ===
+        
         if event.type == pygame.KEYDOWN and current_screen == "shop":
             if event.key == pygame.K_RETURN:
                 if shop_search_text.strip():
@@ -688,20 +688,20 @@ while running:
                 if event.unicode.isprintable() and len(shop_search_text) < 24:
                     shop_search_text += event.unicode
         
-        # === MOUSE CLICKS ===
+        
         if event.type == pygame.MOUSEBUTTONDOWN:
             
-            # Menu screen
+            
             if current_screen == "menu":
                 if start_button.is_clicked(event.pos):
                     current_screen = "intro"
             
-            # Story intro
+            
             elif current_screen == "intro":
                 if continue_button.is_clicked(event.pos):
                     current_screen = "location"
             
-            # Location overview (with Talk/Search + Choose Route buttons)
+           
             elif current_screen == "location":
                 for button in action_buttons:
                     if button.is_clicked(event.pos):
@@ -711,7 +711,7 @@ while running:
                             current_screen = "routes"
                         break
             
-            # Dialogue choices screen
+            
             elif current_screen == "choices":
                 for button in choice_buttons:
                     if button.is_clicked(event.pos):
@@ -722,7 +722,7 @@ while running:
                             current_screen = "location"
                         break
             
-            # Travel routes screen
+            
             elif current_screen == "routes":
                 location_table = {
                     starting.name: starting, garage.name: garage,
@@ -740,13 +740,13 @@ while running:
                                 travel_to(location_table[target_name])
                         break
             
-            # Shop search
+            
             elif current_screen == "shop":
                 if leave_shop_button.is_clicked(event.pos):
                     current_screen = "location"
                     current_dialogue = ""
             
-            # Boss battle stage 1: find the boss (binary search)
+            
             elif current_screen == "find_boss":
                 door_buttons = draw_find_boss()
                 for button in door_buttons:
@@ -754,7 +754,7 @@ while running:
                         click_door(int(button.text))
                         break
             
-            # Boss battle stage 2b: enter attack sequence (queue)
+            
             elif current_screen == "attack_input":
                 direction_buttons = draw_attack_input()
                 for button in direction_buttons:
@@ -762,12 +762,12 @@ while running:
                         click_direction(button.text)
                         break
             
-            # Attack failed - continue to route challenge
+            
             elif current_screen == "attack_failed":
                 if continue_to_route_button.is_clicked(event.pos):
                     begin_route_map()
             
-            # Boss battle stage 3: route map (Dijkstra)
+            
             elif current_screen == "route_map":
                 option_buttons = draw_route_map()
                 for button in option_buttons:
@@ -775,17 +775,17 @@ while running:
                         click_route_option(button.text)
                         break
             
-            # After boss battle - continue to destination
+            
             elif current_screen == "after_boss":
                 if proceed_button.is_clicked(event.pos):
                     travel_to(destination)
             
-            # Reached destination - continue to celebration
+            
             elif current_screen == "destination_reached":
                 if proceed_button.is_clicked(event.pos):
                     travel_to(celebration)
             
-            # Win or lose screens
+            
             elif current_screen in ("ended_win", "ended_lose"):
                 if restart_button.is_clicked(event.pos):
                     # Reset game state
@@ -799,12 +799,12 @@ while running:
                     boss_score = 0
                     boss_health = 3
     
-    # === BOSS BATTLE TIMING (auto-advance from "show sequence" to "attack") ===
+    
     if current_screen == "show_sequence":
         if pygame.time.get_ticks() - sequence_show_time > 4000:
             begin_attack_input()
     
-    # === DRAW THE CURRENT SCREEN ===
+    
     if current_screen == "menu":
         draw_menu()
     elif current_screen == "intro":
@@ -828,7 +828,7 @@ while running:
     elif current_screen == "route_map":
         draw_route_map()
     elif current_screen == "after_boss":
-        # Reuse location screen pattern
+        
         screen.fill((0, 0, 0))
         title_text = title_font.render("Boss Defeated", False, (100, 255, 100))
         title_rect = title_text.get_rect(center=(400, 35))
