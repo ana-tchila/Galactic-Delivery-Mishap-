@@ -315,51 +315,6 @@ def draw_ending_screen(won):
 
 
 # converting the boss game into functions to integrate to the GUI
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def begin_find_boss():
     global current_screen, boss_door, search_low, search_high, boss_message
 
@@ -679,41 +634,6 @@ def click_route_option(option):
             " Game over."
         )
         current_screen = "ended_lose"
-
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 def draw_police_screen(): 
     screen.fill((0,0,0)) #Fill screen
