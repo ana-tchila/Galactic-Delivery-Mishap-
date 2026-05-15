@@ -230,8 +230,7 @@ def draw_shop_scene():
         shop_text += "\n\n" + current_dialogue
     render_text_block(shop_text, panel.x + 15, panel.y + 15, panel.width - 30, font)
 
-    item_label = small_font.render("Item available:", False, (255, 255, 255))
-    screen.blit(item_label, (50, 355))
+    
 
     input_box = pygame.Rect(200, 350, 400, 30)
     pygame.draw.rect(screen, (30, 30, 30), input_box)
@@ -267,12 +266,12 @@ def draw_ending_screen(won):
 
 def begin_find_boss():
     global current_screen, boss_door, search_low, search_high, boss_message
-    current_screen = "find_boss"
+    current_screen = "find_boss" # Set the current screen to the boss challenge
     boss_door = random.randint(1, 15)
     search_low = 1
     search_high = 15
     boss_message = "You enter the building and see 15 doors. The boss is behind one of them. Which one do you choose?"
-
+##############
 def draw_find_boss():
     screen.fill((0, 0, 0))
     title_text = title_font.render("Find the Boss", False, (255, 255, 255))
@@ -291,7 +290,7 @@ def draw_find_boss():
         door_buttons.append(button)
 
     return door_buttons
-
+###############
 #5740479 
 def click_door(door_number):
     global search_low, search_high, boss_message, current_screen
@@ -325,7 +324,7 @@ def click_door(door_number):
         )
         return 
 #5740479 
-
+#############
 def draw_signal_sequence():
     global current_screen, signal_message, boss_health, sequence_show_time
     screen.fill((0, 0, 0))
@@ -633,13 +632,22 @@ def travel_to(location):
     
     
     if current_location == garage and previous_location == shop:
-        gps_installed = True
-        current_dialogue = (
+        if player_inventory.has("GPS"):
+            gps_installed = True
+            current_dialogue = (
             "Mechanic: GPS installed and working perfectly!\n\n"
             "GPS calculating fastest route...\n"
             "Best path: Garage -> Police Checkpoint -> Destination"
-        )
-        current_screen = "location"
+            )
+            current_screen = "location"
+        else:
+            end_message = ("You return to the garage empty-handed.\n\n"
+                "Mechanic: You came back with nothing? "
+                "I can't fix your GPS without the part!\n\n"
+                "Without a GPS, you can't find Brad Cooper's house. "
+                "The delivery fails. Your boss fires you on the spot."
+            )
+            current_screen = "ended_lose"
         return
     
     

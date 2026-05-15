@@ -61,30 +61,39 @@ class inventory:
 # Searching the system 
 
 def search_shop(shop_choices, item_wanted, player_inventory):
-    print("Searching the shop choices...")
-
+   
+    # Handle empty input
+    if not item_wanted or not item_wanted.strip():
+        return "Type the name of an item to search for it."
+    
     shop_items = list(shop_choices.items.keys())
-
-    index = search(shop_items, item_wanted)
-
-    if index is None:
-        print("The item was not found in the shop.")
-        return f" You need to look for the '{item_wanted}'"
-
-    offered_item = shop_items[index]
+    
+    # Make search case-insensitive by matching against lowercase versions
+    item_wanted_lower = item_wanted.lower().strip()
+    matched_index = None
+    
+    for i in range(len(shop_items)):
+        if shop_items[i].lower() == item_wanted_lower:
+            matched_index = i
+            break
+    
+    if matched_index is None:
+        available = ", ".join(shop_items)
+        return (
+            f"Sorry, '{item_wanted}' is not for sale in this shop.\n"
+            f"Available items: {available}."
+        )
+    
+    offered_item = shop_items[matched_index]
     print("The shopkeeper found:", offered_item)
-
+    
     descriptions = shop_choices.items.get(offered_item, "Woah buddy, you wish!")
-
+    
     if player_inventory.has(offered_item):
-        print("You already have this item.")
-        return f"{descriptions}\nYou already have {offered_item}."
-
-    print("You do not have this item yet.")
+        return f"{descriptions}\n\nYou already have {offered_item}."
+    
     player_inventory.add_item(offered_item)
-
     return f"{descriptions}\n\nYou take the {offered_item}."
-
     
    
 
