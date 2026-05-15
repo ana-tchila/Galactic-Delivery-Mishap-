@@ -268,7 +268,7 @@ def draw_ending_screen(won):
     restart_button.draw(screen)
 
 
-# converting the boss game into functions to intefrate to the GUI
+# converting the boss game into functions to integrate to the GUI
 
 def begin_find_boss():
     global current_screen, boss_door, search_low, search_high, boss_message
