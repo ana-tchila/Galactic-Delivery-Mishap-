@@ -7,6 +7,7 @@ import pygame
 from sys import exit
 from Graph import galaxy, starting, garage, diner, police, shop, parade, destination, celebration, Stack, bfs, make_connections_reciprocal
 from shop_system import search, inventory, search_shop
+from police_station import generate_licence, police_scan, player_licence
 
 
 pygame.init()
@@ -101,9 +102,9 @@ def get_visible_routes(location):
     elif location == shop:
         return [garage.name]
     elif location == garage:
-        if not gps_installed:
+        if not movement_history.peek() == shop:
             return [diner.name]
-        elif gps_installed: 
+        elif movement_history.peek() and gps_installed: 
             return [police.name]
     elif location == police:
         return [destination.name]
@@ -112,7 +113,7 @@ def get_visible_routes(location):
 def get_visible_choices(location):
     if location == garage and gps_installed:
         return []
-    if location in (parade, destination, celebration, police):
+    if location in (parade, destination, celebration):
         return []
     return list(location.choices.keys())
 
@@ -290,8 +291,7 @@ def draw_find_boss():
         door_buttons.append(button)
 
     return door_buttons
-###############
-#5740479 
+    
 def click_door(door_number):
     global search_low, search_high, boss_message, current_screen
 
@@ -305,7 +305,7 @@ def click_door(door_number):
     # Correct door found 
     elif door_number == boss_door: 
         boss_message = ("You found the boss")
-        draw_signal_sequence
+        draw_signal_sequence()
         return 
     
     #Behind lower value door 
@@ -323,8 +323,7 @@ def click_door(door_number):
         f"Search between {search_low} and {search_high}"
         )
         return 
-#5740479 
-#############
+
 def draw_signal_sequence():
     global current_screen, signal_message, boss_health, sequence_show_time
     screen.fill((0, 0, 0))
@@ -342,8 +341,7 @@ def draw_signal_sequence():
                       f"[{sequance_dispaly}\n\n"
                         f"You have 5 seconds to memorize the sequence]")
     render_text_block(info, panel.x + 15, panel.y + 15, panel.width - 30, font)
-
-
+    
 def draw_show_sequence():
     global sequence_show_time
     sequence_show_time = pygame.time.get_ticks()
@@ -530,8 +528,22 @@ def click_route_option(option):
     )
     current_screen = "after_boss"
 
+def draw_police_screen(): 
+    screen.fill((0,0,0)) #Fill screen
 
+    title_text = title_font.render("Police Checkpoint", False, (255, 255, 255))
+    title_rect = title_text.get_rect(center=(400,100)) 
+    screen.blit(title_text, title_rect) #Draws title text on the rectangle 
+    
+    panel = pygame.Rect(40, 130, 720, 300) 
+    pygame.draw.rect(screen, (0, 0, 0), panel) # Black textbox 
+    pygame.draw.rect(screen, (255, 255, 255), panel, 2) # White outline 
 
+    text = current_dialogue
+    render_text_block(text, panel.x + 15, panel.y + 15, panel.width - 30, font) # Text placement and font
+
+    #Scan button to process the licence
+    scan_button.draw(screen)
 
 current_screen = "menu"
 current_location = starting
@@ -540,11 +552,8 @@ current_dialogue = ""
 player_inventory = inventory()
 shop_search_text = ""
 
-
-
 gps_installed = False
 end_message = ""
-
 
 boss_health = 3
 boss_door = 0
@@ -560,7 +569,6 @@ optimal_route = []
 optimal_cost = 0
 route_map_message = ""
 
-
 start_button = Button(300, 400, 200, 50, "Start Game")
 continue_button = Button(300, 470, 200, 50, "Continue")
 leave_shop_button = Button(560, 395, 200, 40, "Leave Shop")
@@ -570,7 +578,7 @@ back_button = Button(50, 460, 150, 50, "Back")
 talk_button = Button(120, 460, 230, 60, "Talk / Search")
 travel_button = Button(450, 460, 230, 60, "Choose Route")
 proceed_button = Button(300, 460, 200, 60, "Continue")
-
+scan_button = Button(300, 460, 200, 60, "Scan Licence")
 
 def build_action_buttons(location):
     buttons = []
@@ -586,7 +594,6 @@ def build_action_buttons(location):
         buttons.append(Button(285, 460, 230, 60, "Choose Route"))
 
     return buttons
-
 
 def build_choice_buttons(location):
     buttons = []
@@ -614,13 +621,11 @@ def travel_to(location):
     movement_history.push(previous_location)
     current_location = location
     current_dialogue = ""
-    
-    
+
     if current_location == parade:
         begin_find_boss()
         return
-    
-    
+
     if current_location == shop:
         current_screen = "shop"
         current_dialogue = (
@@ -629,7 +634,6 @@ def travel_to(location):
             "Items available: Raygun, GPS, Cap, Gloop" # We don't need the small items available box 
         )
         return
-    
     
     if current_location == garage and previous_location == shop:
         if player_inventory.has("GPS"):
@@ -650,7 +654,13 @@ def travel_to(location):
             current_screen = "ended_lose"
         return
     
-    
+    if current_location == police: 
+        current_screen = "police"
+        current_dialogue = ("POLICE CHECKPOINT\n" 
+        "Officer: Show your licence"
+        )
+        return 
+
     if current_location == destination:
         if player_inventory.has("GPS"):
             # Use BFS to find path to celebration as the algorithm showcase
@@ -767,7 +777,36 @@ while running:
                 if leave_shop_button.is_clicked(event.pos):
                     current_screen = "location"
                     current_dialogue = ""
-            
+                
+            elif current_screen == "police": 
+                
+                #Checks if the scan button is clicked 
+                if scan_button.is_clicked(event.pos): 
+                    
+                    # Use the Bloom Filter instance
+                    result = police_scan(player_licence)
+
+                    if result == "Let the driver pass": 
+
+                        current_dialogue =(
+                            "POLICE CHECKPOINT\n" 
+                            "Officer: Licence is valid\n"
+                            "Let driver pass.\n"
+                        )
+
+                        # Let's the player pick the location 
+                        current_screen = "location" 
+
+                    else: 
+
+                        end_message = ( 
+                            "POLICE CHECKPOINT\n"
+                            "Officer: Inalid licence\n"
+                            "GAME OVER\n"
+                        )
+                        
+                        # Terminate the game 
+                        current_screen = "ended_lose"
             
             elif current_screen == "find_boss":
                 door_buttons = draw_find_boss()
@@ -839,6 +878,8 @@ while running:
         draw_route_screen()
     elif current_screen == "shop":
         draw_shop_scene()
+    elif current_screen == "police": 
+        draw_police_screen()
     elif current_screen == "find_boss":
         draw_find_boss()
     elif current_screen == "show_sequence":
