@@ -322,7 +322,7 @@ def click_door(door_number):
         f"Search between {search_low} and {search_high}"
         )
         return 
-    #5740479 
+#5740479 
 
 def draw_signal_sequence():
     global current_screen, signal_message, boss_health, sequence_show_time
