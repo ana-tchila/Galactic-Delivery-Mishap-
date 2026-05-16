@@ -9,7 +9,7 @@ from Graph import (
     galaxy, starting, garage, diner, police, shop, parade, destination, 
     celebration, Stack, bfs, make_connections_reciprocal
 )
-from shop_system import search, inventory, search_shop
+from shop_system import search, Inventory, search_shop
 from police_station import assign_player_licence, police_scan
 
 pygame.init()
@@ -883,7 +883,6 @@ while running:
                 
             elif current_screen == "police": 
                 
-                #Checks if the scan button is clicked 
                 if scan_button.is_clicked(event.pos): 
                     
                     # Use the Bloom Filter instance

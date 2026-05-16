@@ -7,7 +7,7 @@ import random
 import time
 import os
 from boss_game import find_boss, space_boss_battle, route_map_challenge
-from shop_system import inventory, search_shop 
+from shop_system import Inventory, search_shop 
 from police_station import police_scan, assign_player_licence
 
 
