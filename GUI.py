@@ -9,7 +9,7 @@ from Graph import (
     galaxy, starting, garage, diner, police, shop, parade, destination, 
     celebration, Stack, bfs, make_connections_reciprocal
 )
-from shop_system import search, Inventorynventory, search_shop
+from shop_system import search, Inventory, search_shop
 from police_station import generate_licence, police_scan, player_licence
 
 pygame.init()
