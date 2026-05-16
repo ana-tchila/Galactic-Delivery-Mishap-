@@ -773,7 +773,7 @@ def travel_to(location):
         return 
 
     if current_location == destination:
-        if player_inventory.has("GPS"):
+        if player_inventory.has("GPS") or current_screen == "after_boss":
             # Use BFS to find path to celebration as the algorithm showcase
             make_connections_reciprocal()
             path_to_celebration = bfs(destination, celebration)
