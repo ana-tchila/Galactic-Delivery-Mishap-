@@ -117,7 +117,7 @@ def generate_licence():
 all_licences = [generate_licence() for i in range(10)]
 
 #Choose 5 Licences to be valid 
-valid_licences = random.sample(all_licences, 5) 
+valid_licences = random.sample(all_licences, 6) 
 licence_filter = BloomFilter(len(valid_licences), 0.01) #Make an instance 
 
 #Add only the valid licenses into the Bloom Filter 
@@ -125,7 +125,10 @@ for licence in valid_licences:
     licence_filter.add(licence) 
 
 #Assigns the player one random licence 
-player_licence = random.choice(all_licences)
+def assign_player_licence(): 
+    """Assings random licence"""
+    
+    return random.choice(all_licences)
 
 def police_scan(licence): 
     """Checks if a licence is valid"""

@@ -8,7 +8,7 @@ import time
 import os
 from boss_game import find_boss, space_boss_battle, route_map_challenge
 from shop_system import inventory, search_shop 
-from police_station import police_scan, player_licence
+from police_station import police_scan, assign_player_licence
 
 
 #Graph Node 
@@ -287,7 +287,7 @@ if __name__ == "__main__": # For the GUI to work
 
 			print(f"Here is my licence: {player_licence}")
 			
-			result = police_scan(player_licence)
+			result = police_scan(assign_player_licence)
 
 			if result == "Access Denied": 
 				print("GAME OVER")
