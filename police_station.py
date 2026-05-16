@@ -17,12 +17,12 @@ class BloomFilter(object):
     - A bit array
     """ 
 
-    def __init__(self, items_count, fp_prob): 
+    def __init__(self, items_count: int, fp_prob: float) -> None: 
         """ Constructor for Bloom filter 
 
         Args: 
-        items_count: Number of items expected to be stored. 
-        fp_prob :Desired false positive probability
+            items_count: Number of items expected to be stored. 
+            fp_prob :Desired false positive probability
         """ 
 
         self.fp_prob = fp_prob # Stores false positive probability 
@@ -35,7 +35,7 @@ class BloomFilter(object):
         #Number of hash function needed 
         self.hash_count = self.get_hash_count(self.size, items_count) 
     
-    def add(self, item): 
+    def add(self, item: str) -> None: 
         """ Adds an item in the filter""" 
 
         # Creates an empty list to store hash positions 
@@ -57,7 +57,7 @@ class BloomFilter(object):
             self.bit_array[digest] = True
             # Sets the corresponding bit positions to True 
     
-    def check(self, item): 
+    def check(self, item: str) -> bool: 
         """ Checks if an item is present""" 
 
         for i in range(self.hash_count): # Iterates through 
@@ -71,7 +71,7 @@ class BloomFilter(object):
         return True # Returns True 
 
     @classmethod 
-    def get_size(self, n, p): 
+    def get_size(self, n: int, p: float) -> int: 
         """ 
         Returns the size of the bit array
 
@@ -89,7 +89,7 @@ class BloomFilter(object):
         return int(m) #Returns m in integer form 
     
     @classmethod
-    def get_hash_count(self, m, n): 
+    def get_hash_count(self, m: int, n: int) -> int: 
         """ Returns the number of hash functions used 
 
         Args:
@@ -108,7 +108,7 @@ class BloomFilter(object):
 #print(BloomFilter.get_size(10, 0.01)) 
 #print(BloomFilter.get_hash_count(95, 10))
 
-def generate_licence(): 
+def generate_licence() -> str: 
     """Generates a random 5-digit licence."""
 
     return str(random.randint(10000, 99999)) # Generates random 5 digit numbers 
@@ -117,7 +117,7 @@ def generate_licence():
 all_licences = [generate_licence() for i in range(10)]
 
 #Choose 5 Licences to be valid 
-valid_licences = random.sample(all_licences, 5) 
+valid_licences = random.sample(all_licences, 6) 
 licence_filter = BloomFilter(len(valid_licences), 0.01) #Make an instance 
 
 #Add only the valid licenses into the Bloom Filter 
@@ -125,9 +125,12 @@ for licence in valid_licences:
     licence_filter.add(licence) 
 
 #Assigns the player one random licence 
-player_licence = random.choice(all_licences)
+def assign_player_licence() -> str: 
+    """Assings random licence"""
+    
+    return random.choice(all_licences)
 
-def police_scan(licence): 
+def police_scan(licence) -> str: 
     """Checks if a licence is valid"""
 
     if licence_filter.check(licence): 

@@ -9,8 +9,8 @@ from Graph import (
     galaxy, starting, garage, diner, police, shop, parade, destination, 
     celebration, Stack, bfs, make_connections_reciprocal
 )
-from shop_system import search, Inventory, search_shop
-from police_station import generate_licence, police_scan, player_licence
+from shop_system import search, inventory, search_shop
+from police_station import assign_player_licence, police_scan
 
 pygame.init()
 pygame.mixer.init()
@@ -658,6 +658,7 @@ gps_installed = False
 end_message = ""
 
 boss_health = 3
+player_licence = assign_player_licence()
 boss_door = 0
 search_low = 1
 search_high = 15
@@ -773,6 +774,7 @@ def travel_to(location):
         current_dialogue = ("POLICE CHECKPOINT\n" 
         "Officer: Show your licence"
         )
+       
         return 
 
     if current_location == destination: 
@@ -901,7 +903,7 @@ while running:
                     else: 
                         end_message = ( 
                             "POLICE CHECKPOINT\n"
-                            "Officer: Inalid licence\n"
+                            "Officer: Invalid licence\n"
                             "GAME OVER\n"
                         )
                         
@@ -953,6 +955,7 @@ while running:
                     gps_installed = False
                     score = 0
                     boss_health = 3
+                    player_licence = assign_player_licence()
 
     if current_screen == "show_sequence":
         if pygame.time.get_ticks() - sequence_show_time > 4000:
@@ -1024,3 +1027,5 @@ while running:
 
     pygame.display.flip()
     clock.tick(60)
+
+

@@ -8,7 +8,7 @@ import time
 import os
 from boss_game import find_boss, space_boss_battle, route_map_challenge
 from shop_system import inventory, search_shop 
-from police_station import police_scan, player_licence
+from police_station import police_scan, assign_player_licence
 
 
 #Graph Node 
@@ -20,19 +20,18 @@ class Location:
 	
 	Stores name, description, connections to other locations, 
 	and available actions."""
-	def __init__(self, name: str, description:str, items: str = None): 
+	def __init__(self, name: str, description: str, items: str = None): 
 		self.name = name 
 		self.description = description
 		self.connections = {} #Dictionary to hold the connections (edges)
 		self.choices = {} #Dictionary to hold the choices 
 		self.items = {} #Items that can be found at the Antique Shop 
 		
-
-	def add_choice(self, choice:str, response:str): 
+	def add_choice(self, choice: str, response: str): 
 		"""Adds a player interaction choice to the location"""
 		self.choices[choice] = response #adds the choice and its response to the dictionary
 	
-	def add_item(self, item: str, description:str): 
+	def add_item(self, item: str, description: str): 
 		"Adds a item and description to the location"
 		self.items[item] = description # adds the items and its description to the dictionary 
 		
@@ -287,7 +286,7 @@ if __name__ == "__main__": # For the GUI to work
 
 			print(f"Here is my licence: {player_licence}")
 			
-			result = police_scan(player_licence)
+			result = police_scan(assign_player_licence)
 
 			if result == "Access Denied": 
 				print("GAME OVER")
