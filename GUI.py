@@ -651,7 +651,7 @@ current_screen = "menu"
 current_location = starting
 movement_history = Stack()
 current_dialogue = ""
-player_inventory = inventory()
+player_inventory = Inventory()
 shop_search_text = ""
 
 gps_installed = False
@@ -947,7 +947,7 @@ while running:
                     current_screen = "menu"
                     current_location = starting
                     movement_history = Stack()
-                    player_inventory = inventory()
+                    player_inventory = Inventory()
                     current_dialogue = ""
                     shop_search_text = ""
                     gps_installed = False
