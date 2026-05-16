@@ -315,21 +315,20 @@ def draw_ending_screen(won):
 
 
 # converting the boss game into functions to integrate to the GUI
-
 def begin_find_boss():
     global current_screen, boss_door, search_low, search_high, boss_message
+
     current_screen = "find_boss"  # Set the current screen to the boss challenge
     boss_door = random.randint(1, 15)
     search_low = 1
     search_high = 15
     boss_message = "You enter the building and see 15 doors. The boss is behind one of them. Which one do you choose?"
-##############
-
 
 def draw_find_boss():
-    screen.fill((0, 0, 0))
-    title_text = title_font.render("Find the Boss", False, (255, 255, 255))
-    title_rect = title_text.get_rect(center=(400, 50))
+    screen.fill((0, 0, 0)) #empty screen 
+
+    title_text = title_font.render("Find the Boss", False, (255, 255, 255)) 
+    title_rect = title_text.get_rect(center=(400, 50)) 
     screen.blit(title_text, title_rect)
 
     panel = pygame.Rect(50, 90, 700, 300)
@@ -340,17 +339,22 @@ def draw_find_boss():
         boss_message,
         panel.x + 15,
         panel.y + 15,
-        panel.width - 30,
+        panel.width - 30,  
         font)
-    door_buttons = []
-    for i in range(1, 16):
-        button = Button(30 + (i - 1) * 50, 450, 40, 40, str(i))
+
+    # Create a list to store the buttons, so they doen't get overwritten
+    door_buttons = [] 
+
+    for i in range(1, 16): # Create buttons for doors 1 to 15 
+        button = Button(30 + (i - 1) * 50, 450, 40, 40, str(i)) # button placement and size 
         button.draw(screen)
-        door_buttons.append(button)
+        door_buttons.append(button) # Add to list - to the end
 
     return door_buttons
 
+# This function is called when a door button is clicked, with the door number as an argument. 
 def click_door(door_number):
+
     global search_low, search_high, boss_message, current_screen
 
     middle_search = (search_high + search_low) // 2  # Get the middle value
@@ -364,7 +368,7 @@ def click_door(door_number):
     elif door_number == boss_door:
         boss_message = ("You found the boss")
 
-        draw_signal_sequence()
+        begin_signal_sequence() # move to the next challenge 
         return 
     
     #Behind lower value door 
@@ -383,10 +387,19 @@ def click_door(door_number):
         )
         return 
 
-        draw_signal_sequence
-        return
+def begin_signal_sequence(): 
+    global current_screen, signal_sequence , sequence_show_time
 
-def draw_signal_sequence():
+    # Generate a random sequence of 3 signals and store in a deque 
+    signal_sequence = deque(random.choices(["UP", "DOWN", "LEFT", "RIGHT"], k=3)) 
+
+    # Get current time 
+    sequence_show_time = pygame.time.get_ticks()
+
+    # Move to the screen that shows the sequence to the player 
+    current_screen = "show_sequence" 
+
+def draw_signal_sequence(): 
     global current_screen, signal_message, boss_health, sequence_show_time
     screen.fill((0, 0, 0))
 
@@ -398,38 +411,17 @@ def draw_signal_sequence():
     pygame.draw.rect(screen, (0, 0, 0), panel)
     pygame.draw.rect(screen, (255, 255, 255), panel, 2)
 
-    sequance_dispaly = " ".join(signal_sequence)
-    info = (f"Memorize the sequence: {sequance_dispaly}"
-            f"[{sequance_dispaly}\n\n"
-            f"You have 5 seconds to memorize the sequence]")
-    render_text_block(info, panel.x + 15, panel.y + 15, panel.width - 30, font)
-    
-def draw_show_sequence():
-    global sequence_show_time
-    sequence_show_time = pygame.time.get_ticks()
-    screen.fill((0, 0, 0))
-
-    title_text = title_font.render("Boss Battle", False, (255, 255, 255))
-    title_rect = title_text.get_rect(center=(400, 50))
-    screen.blit(title_text, title_rect)
-
-    panel = pygame.Rect(50, 90, 700, 300)
-    pygame.draw.rect(screen, (0, 0, 0), panel)
-    pygame.draw.rect(screen, (255, 255, 255), panel, 2)
-
-    sequance_dispaly = " ".join(signal_sequence)
+    sequance_dispaly = "   ".join(signal_sequence) # Adds spaces between the signals for better display 
     info = (f"Memorize the sequence: {sequance_dispaly}\n\n"
-            f"[{sequance_dispaly}]\n\n"
             f"You have 5 seconds to memorize the sequence")
     render_text_block(info, panel.x + 15, panel.y + 15, panel.width - 30, font)
 
-
 def begin_attack_input():
-    global current_screen, siganls_remaining, attack_message
-    current_screen = "attack_input"
-    siganls_remaining = deque(signal_sequence)
-    attack_message = "Repeat the sequence by clicking the signals in the correct order."
+    global current_screen, signals_remaining, attack_message
 
+    current_screen = "attack_input"
+    signals_remaining = deque(signal_sequence)
+    attack_message = "Repeat the sequence by clicking the signals in the correct order."
 
 def draw_attack_input():
     screen.fill((0, 0, 0))
@@ -441,39 +433,48 @@ def draw_attack_input():
     panel = pygame.Rect(50, 90, 700, 300)
     pygame.draw.rect(screen, (0, 0, 0), panel)
     pygame.draw.rect(screen, (255, 255, 255), panel, 2)
-    info = (f"{attack_message}\n\n Boss Health: {boss_health}\n\n Score: {score}")
-    render_text_block(info, panel.x + 15, panel.y + 15, panel.width - 30, font)
 
-    direction_buttons = []
-    layout = [("Up", 0, 0), ("Down", 1, 0), ("Left", 0, 1), ("Right", 1, 1)]
+    # Display the attack message, boss health and score to the player 
+    info = (f"{attack_message}\n\n Boss Health: {boss_health}\n\n Score: {score}")
+    render_text_block(info, panel.x + 15, panel.y + 15, panel.width - 30, font) # Text placement and font 
+
+    direction_buttons = [] # List to store the direction buttons 
+
+    layout = [("UP", 0, 0), ("DOWN", 1, 0), ("LEFT", 0, 1), ("RIGHT", 1, 1)] # Button layout, row  and column for each direction 
+
     button_width = 100
     button_height = 50
-    gap = 20
+    gap = 20 
     start_x = (800 - (2 * button_width + gap)) // 2
-    start_y = 340
-    for lebal, row, col in layout:
+    start_y = 400
+
+    for lebal, row, col in layout: # Create buttons for each direction 
         x = start_x + col * (button_width + gap)
         y = start_y + row * (button_height + gap)
         button = Button(x, y, button_width, button_height, lebal)
         button.draw(screen)
         direction_buttons.append(button)
-    return direction_buttons
+   
+    return direction_buttons # return the buttons so we can check for clicks 
 
 
 def click_direction(direction):
     global boss_health, score, attack_message, current_screen
-    expected = siganls_remaining[0]
-    if direction == expected:
-        siganls_remaining.popleft()
+
+    expected = signals_remaining[0] # Get the next expected signal from the deque 
+
+    if direction == expected: 
+        signals_remaining.popleft()
         attack_message = "Correct! Keep going."
-        if not siganls_remaining:
+
+        if not signals_remaining:
             boss_health -= 1
             score += 1
             if boss_health == 0:
                 begin_route_map()
             else:
                 attack_message = f"You hit the boss! Boss health is now {boss_health}."
-                signal_sequence()
+                begin_signal_sequence() # Start a new sequence for the next attack 
     else:
         attack_message = f"Wrong signal! Try again. Expected {expected}. The boss blocked your attack!"
         current_screen = "attack_failed"
@@ -506,6 +507,7 @@ def draw_attack_failed():
 
 def begin_route_map():
     global current_screen, optimal_route, optimal_cost, route_map_message
+
     current_screen = "route_map"
 
     space_graph = {
@@ -520,6 +522,7 @@ def begin_route_map():
     # dijkstra's algorithm to find the optimal route
     distance = {node: float('inf') for node in space_graph}
     predecessor = {node: None for node in space_graph}
+
     distance["Base"] = 0
     unexplored = list(space_graph)
 
@@ -529,18 +532,29 @@ def begin_route_map():
 
         for neighbor, cost in space_graph[current].items():
             alt = distance[current] + cost
+
             if alt < distance[neighbor]:
                 distance[neighbor] = alt
                 predecessor[neighbor] = current
 
+    # Build the route from Destination back to Base
     optimal_route = []
     current = "Destination"
+
     while current is not None:
         optimal_route.append(current)
         current = predecessor[current]
-    optimal_route = distance["Destination"]
-    route_map_message = "Choose the route with the lowest total cost to reach the destination safely."
+    
+    # Make the reverse of route 
+    optimal_route.reverse()
 
+    # turn the list into text 
+    optimal_route = " -> ".join(optimal_route)
+
+    # Total cost of the optimal route 
+    optimal_cost = distance["Destination"] 
+
+    route_map_message = ("You need to outrun the Alien King to defeat him and take his ship.")
 
 def draw_route_map():
     screen.fill((0, 0, 0))
@@ -562,7 +576,8 @@ def draw_route_map():
                 "Mars -> Jupiter (cost 3)\n"
                 "Mars -> Venus (cost 6)\n"
                 "Jupiter -> Destination (cost 2)\n"
-                "Venus -> Destination (cost 4)")
+                "Venus -> Destination (cost 4)"
+                )
 
     render_text_block(
         map_info,
@@ -572,12 +587,15 @@ def draw_route_map():
         font)
 
     route_options_buttons = []
+
     routes = [
         "A: Base -> Moon -> Destination",
         "B: Base -> Mars -> Jupiter -> Destination",
-        "C: Base -> Mars -> Venus -> Destination", ]
+        "C: Base -> Mars -> Venus -> Destination", 
+    ]
 
     button_y = 395
+
     for i, route in enumerate(routes):
         button = Button(50, button_y + i * 60, 700, 50, route)
         button.draw(screen)
@@ -587,27 +605,35 @@ def draw_route_map():
 
 
 def click_route_option(option):
-    global current_screen, score, current_dialogue
+    global current_screen, score, current_dialogue, optimal_route, optimal_cost, end_message
 
     route_choices = {
-        "A": ["Base -> Moon -> Destination"],
-        "B": ["Base -> Mars -> Jupiter -> Destination"],
-        "C": ["Base -> Mars -> Venus -> Destination"]
+        "A": "Base -> Moon -> Destination",
+        "B": "Base -> Mars -> Jupiter -> Destination",
+        "C": "Base -> Mars -> Venus -> Destination",
     }
-    chosen_letter = option[0]
-    chosen_route = route_choices[chosen_letter]
+
+    chosen_letter = option[0] # Get the letter from the button text 
+    chosen_route = route_choices[chosen_letter] # Get the corresponding route text 
 
     if chosen_route == optimal_route:
         score += 1
-        result = "You chose the optimal route and reached the destination safely! You win!"
-    else:
-        result = "You chose a suboptimal route and got caught by space pirates! Game over."
 
-    current_dialogue = (
-        f"{result}\n\nTotal fuel cost of the best route: {optimal_cost}\n\n"
-        "You defeated the Alien King! You can now take his ship anywhere."
-    )
-    current_screen = "after_boss"
+        result = "You chose the optimal route and reached the destination safely! You win!"
+        
+        current_dialogue = (
+            f"{result}\n\n"
+            f"Total fuel cost of the best route: {optimal_cost}\n\n"
+            "You defeated the Alien King! You can now take his ship anywhere."
+        )
+        current_screen = "after_boss"
+
+    else:
+        end_message= (
+            "You chose a suboptimal route and got caught by space pirates!\n\n"
+            " Game over."
+        )
+        current_screen = "ended_lose"
 
 def draw_police_screen(): 
     screen.fill((0,0,0)) #Fill screen
@@ -643,7 +669,7 @@ search_low = 1
 search_high = 15
 boss_message = ""
 signal_sequence = deque()
-siganls_remaining = deque()
+signals_remaining = deque()
 score = 0
 attack_message = ""
 sequence_show_time = 0
@@ -928,7 +954,7 @@ while running:
                     current_dialogue = ""
                     shop_search_text = ""
                     gps_installed = False
-                    boss_score = 0
+                    score = 0
                     boss_health = 3
 
     if current_screen == "show_sequence":
@@ -952,7 +978,7 @@ while running:
     elif current_screen == "find_boss":
         draw_find_boss()
     elif current_screen == "show_sequence":
-        draw_show_sequence()
+        draw_signal_sequence()
     elif current_screen == "attack_input":
         draw_attack_input()
     elif current_screen == "attack_failed":
