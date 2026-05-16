@@ -9,7 +9,7 @@ from Graph import (
     galaxy, starting, garage, diner, police, shop, parade, destination, 
     celebration, Stack, bfs, make_connections_reciprocal
 )
-from shop_system import search, inventory, search_shop
+from shop_system import search, Inventory, search_shop
 from police_station import assign_player_licence, police_scan
 
 pygame.init()
@@ -17,7 +17,10 @@ pygame.mixer.init()
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Intergalactic Delivery")
 clock = pygame.time.Clock()
-pygame.mixer.music.load('sound/music.ogg')
+try:
+    pygame.mixer.music.load('sound/music.ogg')
+except pygame.error:
+    print("Music file not found, continuing without sound.")
 pygame.mixer.music.play(-1)
 running = True
 

@@ -7,7 +7,7 @@ import random
 import time
 import os
 from boss_game import find_boss, space_boss_battle, route_map_challenge
-from shop_system import inventory, search_shop 
+from shop_system import Inventory, search_shop 
 from police_station import police_scan, assign_player_licence
 
 
@@ -246,7 +246,7 @@ if __name__ == "__main__": # For the GUI to work
 
 	current_location = starting # Set the current location to the starting point 
 	movement_history = Stack() #Stack to keep track of the movement history 
-	player_inventory = inventory() #creates an instance of Inventory Class
+	player_inventory = Inventory() #creates an instance of Inventory Class
 
 	while game_running: 
 
