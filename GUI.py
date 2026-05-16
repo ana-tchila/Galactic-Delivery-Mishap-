@@ -12,13 +12,12 @@ from Graph import (
 from shop_system import search, inventory, search_shop
 from police_station import generate_licence, police_scan, player_licence
 
-
 pygame.init()
 pygame.mixer.init()
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Intergalactic Delivery")
 clock = pygame.time.Clock()
-pygame.mixer.music.load('sound/music.OGG')
+pygame.mixer.music.load('sound/music.ogg')
 pygame.mixer.music.play(-1)
 running = True
 
@@ -28,7 +27,6 @@ small_font = pygame.font.Font('font/Pixeltype.ttf', size=20)
 player = pygame.image.load('player/bike.png')
 smaller_player = pygame.transform.scale(player, (70, 70))
 player_x_pos = [0]
-
 
 # the Button class represents interactive buttons in the GUI, with methods
 # to draw itself and check for clicks and hover states.
@@ -117,14 +115,13 @@ def get_visible_routes(location):
     elif location == shop:
         return [garage.name]
     elif location == garage:
-        if not movement_history.peek() == shop:
-            return [diner.name]
-        elif movement_history.peek() and gps_installed: 
+        if  movement_history.peek() == shop and gps_installed:
             return [police.name]
+        else: 
+            return [diner.name]
     elif location == police:
         return [destination.name]
     return []
-
 
 def get_visible_choices(location):
     if location == garage and gps_installed:
@@ -132,7 +129,6 @@ def get_visible_choices(location):
     if location in (parade, destination, celebration):
         return []
     return list(location.choices.keys())
-
 
 def draw_menu():
     screen.fill((0, 0, 0))
@@ -146,7 +142,6 @@ def draw_menu():
     if player_x_pos[0] > 800:
         player_x_pos[0] = -70
     screen.blit(smaller_player, (player_x_pos[0], 200))
-
 
 def draw_intro():
     screen.fill((0, 0, 0))
@@ -164,7 +159,6 @@ def draw_intro():
 
     render_text_block(intro, 220, 210, 700, font)
     continue_button.draw(screen)
-
 
 def draw_location_screen():
     screen.fill((0, 0, 0))
@@ -192,7 +186,6 @@ def draw_location_screen():
     for button in action_buttons:
         button.draw(screen)
     draw_inventory_bar()
-
 
 def draw_choice_screen():
     screen.fill((0, 0, 0))
@@ -225,7 +218,6 @@ def draw_choice_screen():
         button.draw(screen)
     draw_inventory_bar()
 
-
 def draw_route_screen():
     screen.fill((0, 0, 0))
     title_text = title_font.render(
@@ -253,7 +245,6 @@ def draw_route_screen():
         button.draw(screen)
 
     draw_inventory_bar()
-
 
 def draw_shop_scene():
     screen.fill((0, 0, 0))
@@ -289,7 +280,6 @@ def draw_shop_scene():
     leave_shop_button.draw(screen)
     draw_inventory_bar()
 
-
 def draw_ending_screen(won):
     screen.fill((0, 0, 0))
     if won:
@@ -313,7 +303,6 @@ def draw_ending_screen(won):
 
     restart_button.draw(screen)
 
-
 # converting the boss game into functions to integrate to the GUI
 def begin_find_boss():
     global current_screen, boss_door, search_low, search_high, boss_message
@@ -322,7 +311,16 @@ def begin_find_boss():
     boss_door = random.randint(1, 15)
     search_low = 1
     search_high = 15
-    boss_message = "You enter the building and see 15 doors. The boss is behind one of them. Which one do you choose?"
+
+    boss_message = (
+        "You see a large ship in the sky.\n"
+		"You know the model of the ship and know it has GPS.\n"
+		"You decide to defeat the Alien king and take the ship\n\n" 
+        "You enter a corridor with 15 locked doors.\n"
+        "The boss is hiding behind one of them.\n"
+        "Your scanner can split the door zone in half.\n"
+        "Pick the middle door for better optimisation.\n"
+    )
 
 def draw_find_boss():
     screen.fill((0, 0, 0)) #empty screen 
@@ -457,7 +455,6 @@ def draw_attack_input():
    
     return direction_buttons # return the buttons so we can check for clicks 
 
-
 def click_direction(direction):
     global boss_health, score, attack_message, current_screen
 
@@ -478,7 +475,6 @@ def click_direction(direction):
     else:
         attack_message = f"Wrong signal! Try again. Expected {expected}. The boss blocked your attack!"
         current_screen = "attack_failed"
-
 
 def draw_attack_failed():
     screen.fill((0, 0, 0))
@@ -503,7 +499,6 @@ def draw_attack_failed():
         font)
 
     continue_to_route_button.draw(screen)
-
 
 def begin_route_map():
     global current_screen, optimal_route, optimal_cost, route_map_message
@@ -638,7 +633,6 @@ def click_route_option(option):
 def draw_police_screen(): 
     screen.fill((0,0,0)) #Fill screen
 
-
     title_text = title_font.render("Police Checkpoint", False, (255, 255, 255))
     title_rect = title_text.get_rect(center=(400,100)) 
     screen.blit(title_text, title_rect) #Draws title text on the rectangle 
@@ -668,8 +662,6 @@ boss_door = 0
 search_low = 1
 search_high = 15
 boss_message = ""
-signal_sequence = deque()
-signals_remaining = deque()
 score = 0
 attack_message = ""
 sequence_show_time = 0
@@ -738,6 +730,7 @@ def travel_to(location):
 
     if current_location == shop:
         current_screen = "shop"
+        
         current_dialogue = (
             "Welcome to my humble shop, stranger! "
             "Type the name of an item to search for it.\n"
@@ -745,25 +738,35 @@ def travel_to(location):
             "Items available: Raygun, GPS, Cap, Gloop"
         )
         return
+     
+    if current_location == garage: 
 
-    if current_location == garage and previous_location == shop:
-        if player_inventory.has("GPS"):
+        if movement_history.peek() == shop and player_inventory.has("GPS"):
             gps_installed = True
+
             current_dialogue = (
                 "Mechanic: GPS installed and working perfectly!\n\n"
                 "GPS calculating fastest route...\n"
                 "Best path: Garage -> Police Checkpoint -> Destination"
             )
             current_screen = "location"
-        else:
-            end_message = ("You return to the garage empty-handed.\n\n"
-                           "Mechanic: You came back with nothing? "
-                           "I can't fix your GPS without the part!\n\n"
-                           "Without a GPS, you can't find Brad Cooper's house. "
-                           "The delivery fails. Your boss fires you on the spot."
-                           )
-            current_screen = "ended_lose"
-        return
+
+        elif movement_history.peek() == starting: 
+
+            current_screen = "location"
+
+        else: 
+            end_message = ("You didn't pick up the GPS in the shop.\n"
+                "You had to go back to the diner.\n"
+                "There you got really, really, really drunk.\n" 
+                "You were dissapointed in yourself.\n"
+                "In your misery you wandered out of the diner.\n"
+                "You got so lost you are still trying to find your way.\n"
+                "THE END")
+        
+            current_screen = "ended_lose"       
+        
+            return
     
     if current_location == police: 
         current_screen = "police"
@@ -772,27 +775,22 @@ def travel_to(location):
         )
         return 
 
-    if current_location == destination:
-        if player_inventory.has("GPS"):
-            # Use BFS to find path to celebration as the algorithm showcase
-            make_connections_reciprocal()
-            path_to_celebration = bfs(destination, celebration)
-            path_text = " -> ".join(
-                loc.name for loc in path_to_celebration) if path_to_celebration else "Celebration"
-            current_dialogue = (
-                "Congratulations! Package delivered to Brad Cooper on time.\n\n"
-                "Boss: Great job! You earned a promotion. "
-                "Come to my celebration party!\n\n"
-                f"GPS calculating route to celebration:\n{path_text}"
-            )
-            current_screen = "destination_reached"
-        else:
-            end_message = (
-                "Without a GPS, you wandered the streets and couldn't find "
-                "Brad Cooper's house. The food arrived cold and late. "
-                "Your boss is furious. You're fired."
-            )
-            current_screen = "ended_lose"
+    if current_location == destination: 
+        # Use BFS to find path to celebration as the algorithm showcase
+        make_connections_reciprocal()
+        path_to_celebration = bfs(destination, celebration)
+
+        path_text = " -> ".join(
+            loc.name for loc in path_to_celebration) if path_to_celebration else "Celebration"
+            
+        current_dialogue = (
+            "Congratulations! Package delivered to Brad Cooper on time.\n\n"
+            "Boss: Great job! You earned a promotion. "
+            "Come to my celebration party!\n\n"
+            f"GPS calculating route to celebration:\n{path_text}"
+        )
+        current_screen = "destination_reached" 
+        
         return
 
     if current_location == celebration:
@@ -901,7 +899,6 @@ while running:
                         current_screen = "location" 
 
                     else: 
-
                         end_message = ( 
                             "POLICE CHECKPOINT\n"
                             "Officer: Inalid licence\n"
@@ -1001,6 +998,7 @@ while running:
             panel.width - 30,
             small_font)
         proceed_button.draw(screen)
+
     elif current_screen == "destination_reached":
         screen.fill((0, 0, 0))
         title_text = title_font.render(
@@ -1017,8 +1015,10 @@ while running:
             panel.width - 30,
             small_font)
         proceed_button.draw(screen)
+
     elif current_screen == "ended_win":
         draw_ending_screen(won=True)
+
     elif current_screen == "ended_lose":
         draw_ending_screen(won=False)
 
