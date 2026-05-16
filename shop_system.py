@@ -41,15 +41,6 @@ class inventory:
         self.items.append(item)
         print("Current inventory:", self.items)
         
-    def remove_item(self, item):
-        print("\nTrying to remove item:", item)
-
-        if item in self.items:
-            self.items.remove(item)
-            print(item, "removed from inventory.")
-            print("Current inventory:", self.items)
-        else:
-            print(item, "is not in your inventory.")
 
     def has(self, item):
         print("\nChecking if you already have:", item)
