@@ -903,7 +903,7 @@ while running:
                     else: 
                         end_message = ( 
                             "POLICE CHECKPOINT\n"
-                            "Officer: Inalid licence\n"
+                            "Officer: Invalid licence\n"
                             "GAME OVER\n"
                         )
                         
