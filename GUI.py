@@ -312,7 +312,6 @@ def draw_ending_screen(won):
 
 
 # converting the boss game into functions to integrate to the GUI
-
 def begin_find_boss():
     global current_screen, boss_door, search_low, search_high, boss_message
     current_screen = "find_boss"  # Set the current screen to the boss challenge
@@ -320,8 +319,6 @@ def begin_find_boss():
     search_low = 1
     search_high = 15
     boss_message = "You enter the building and see 15 doors. The boss is behind one of them. Which one do you choose?"
-##############
-
 
 def draw_find_boss():
     screen.fill((0, 0, 0))
@@ -339,7 +336,9 @@ def draw_find_boss():
         panel.y + 15,
         panel.width - 30,
         font)
-    door_buttons = []
+
+    door_buttons = [] 
+
     for i in range(1, 16):
         button = Button(30 + (i - 1) * 50, 450, 40, 40, str(i))
         button.draw(screen)
