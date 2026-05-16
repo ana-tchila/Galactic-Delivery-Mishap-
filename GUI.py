@@ -9,7 +9,7 @@ from Graph import (
     galaxy, starting, garage, diner, police, shop, parade, destination, 
     celebration, Stack, bfs, make_connections_reciprocal
 )
-from shop_system import search, inventory, search_shop
+from shop_system import search, Inventorynventory, search_shop
 from police_station import generate_licence, police_scan, player_licence
 
 pygame.init()
@@ -631,7 +631,7 @@ def click_route_option(option):
         current_screen = "ended_lose"
 
 def draw_police_screen(): 
-    screen.fill((0,0,0)) #Fill screen
+    screen.fill((0,0,0)) 
 
     title_text = title_font.render("Police Checkpoint", False, (255, 255, 255))
     title_rect = title_text.get_rect(center=(400,100)) 
