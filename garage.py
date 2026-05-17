@@ -23,7 +23,4 @@ def garage_gps_game():
   # THE PRINT STATEMENT IS JUST PRNTING EMPTY LINES 100 TIMES
 
 
-garage_gps_game()
-
-
   
