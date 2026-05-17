@@ -1006,7 +1006,6 @@ continue_button = Button(300, 470, 200, 50, "Continue")
 leave_shop_button = Button(560, 395, 200, 40, "Leave Shop")
 restart_button = Button(300, 480, 200, 50, "Play Again")
 continue_to_route_button = Button(300, 480, 200, 50, "Continue")
-back_button = Button(50, 460, 150, 50, "Back")
 talk_button = Button(120, 460, 230, 60, "Talk / Search")
 travel_button = Button(450, 460, 230, 60, "Choose Route")
 proceed_button = Button(300, 460, 200, 60, "Continue")
@@ -1280,12 +1279,9 @@ while running:
             elif current_screen == "choices":
                 for button in choice_buttons:
                     if button.is_clicked(event.pos):
-                        if button.text == "Back":
-                            current_screen = "location"
-                        else:
                             current_dialogue = current_location.choices[button.text]
                             current_screen = "location"
-                        break
+                            break
             # Travel route selection screen
             elif current_screen == "routes":
                 # Lookup table: convert button text back into a Location object
@@ -1297,12 +1293,10 @@ while running:
                 }
                 for button in route_buttons:
                     if button.is_clicked(event.pos):
-                        if button.text == "Back":
-                            current_screen = "location"
-                        elif button.text.startswith("Go to "):
-                            target_name = button.text.replace("Go to ", "")
-                            if target_name in location_table:
-                                travel_to(location_table[target_name])
+                        button.text.startswith("Go to "):
+                        target_name = button.text.replace("Go to ", "")
+                        if target_name in location_table:
+                            travel_to(location_table[target_name])
                         break
              # Shop screen: Leave Shop button (search is via keyboard)
             elif current_screen == "shop":
