@@ -1293,10 +1293,10 @@ while running:
                 }
                 for button in route_buttons:
                     if button.is_clicked(event.pos):
-                        button.text.startswith("Go to "):
-                        target_name = button.text.replace("Go to ", "")
-                        if target_name in location_table:
-                            travel_to(location_table[target_name])
+                        if button.text.startswith("Go to "):
+                            target_name = button.text.replace("Go to ", "")
+                            if target_name in location_table:
+                                travel_to(location_table[target_name])
                         break
              # Shop screen: Leave Shop button (search is via keyboard)
             elif current_screen == "shop":
