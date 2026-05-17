@@ -14,7 +14,7 @@ from shop_system import Inventory, search_shop
 from police_station import assign_player_licence, police_scan
 
 
-# Pygame intallation and asset
+# Pygame intsallation and asset
 pygame.init()
 pygame.mixer.init()
 screen = pygame.display.set_mode((800, 600))
