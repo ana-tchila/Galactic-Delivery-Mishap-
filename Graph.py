@@ -221,14 +221,14 @@ if __name__ == "__main__": # For the GUI to work
 # Actual game loop 
 #5740479 
 
-	current_location = starting # Set the current location to the starting point 
-	movement_history = Stack() #Stack to keep track of the movement history 
-	player_inventory = Inventory() #creates an instance of Inventory Class
-    current_location = starting
-    movement_history = Stack() # Stack to keep track of the movement history 
-    player_inventory = Inventory()
+current_location = starting # Set the current location to the starting point 
+movement_history = Stack() #Stack to keep track of the movement history 
+player_inventory = Inventory() #creates an instance of Inventory Class
+current_location = starting
+movement_history = Stack() # Stack to keep track of the movement history 
+player_inventory = Inventory()
 
-    while game_running: 
+while game_running: 
 
         print(f"Current Loccation: {current_location.description}")
 

@@ -1,8 +1,9 @@
 # ID:5752030
 
+
+#Imports
 from collections import deque
 import random
-
 import pygame
 from sys import exit
 from Graph import ( 
@@ -12,11 +13,15 @@ from Graph import (
 from shop_system import search, Inventory, search_shop
 from police_station import assign_player_licence, police_scan
 
+
+#Pygame intallation and asset 
 pygame.init()
 pygame.mixer.init()
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Intergalactic Delivery")
 clock = pygame.time.Clock()
+
+#Error handling to ensure the file works if it didnt find a the costume font and the music file, if not it playes with no music and handles the image
 try:
     pygame.mixer.music.load('sound/music.ogg')
 except pygame.error:
@@ -43,8 +48,7 @@ except (pygame.error, FileNotFoundError):
 
 player_x_pos = [0]
 
-# the Button class represents interactive buttons in the GUI, with methods
-# to draw itself and check for clicks and hover states.
+#Button class
 class Button:
     """
     A clickable rectangular button with text label and hover effect.
@@ -92,6 +96,9 @@ class Button:
             surface: The Pygame surface to draw the button on.
         
         """
+
+        # Use the smaller font for long text labels so they fit
+        # inside the button without overflowing.
         pygame.draw.rect(surface, (255, 255, 255),
                          (self.x, self.y, self.width, self.height))
         chosen_font = small_font if len(self.text) > 18 else font
@@ -139,7 +146,7 @@ class Button:
         """
         return self.is_clicked(pos)
 
-
+# Text rendering helpers
 def wrap_text(text, font, max_width):
     """
     Wrap long text into multiple lines that fit within a maximum width,
@@ -155,7 +162,9 @@ def wrap_text(text, font, max_width):
       A list of strings, each fitting within max_width.
     
     """
-
+    # First split on \n so explicit newlines in the source text 
+    # become paragraph breaks. Then word-wrap each paragraph 
+    # separately based on pixel width.
     words = text.split(' ')
     lines = []
     for paragraph in str(text).split('\n'):
@@ -163,6 +172,10 @@ def wrap_text(text, font, max_width):
         line = ""
         for word in words:
             test_line = line + word + " "
+
+            # If adding this word keeps the line under max_width,
+            # extend the line. Otherwise, save the current line 
+            # and start a new one with this word.
             if font.size(test_line)[0] <= max_width:
                 line = test_line
             else:
@@ -170,7 +183,8 @@ def wrap_text(text, font, max_width):
                 line = word + " "
         if line:
             lines.append(line.strip())
-
+        # Preserve blank paragraphs (e.g. from "\n\n") so dialogue
+        # spacing renders correctly.
         if paragraph == "":
             lines.append("")
     return lines
@@ -260,6 +274,9 @@ def get_visible_routes(location):
     elif location == shop:
         return [garage.name]
     elif location == garage:
+        # The police checkpoint only unlocks after the player
+        # visits the shop AND the mechanic installs the GPS.
+        # Otherwise the only route back is the diner.
         if  movement_history.peek() == shop and gps_installed:
             return [police.name]
         else: 
@@ -287,11 +304,21 @@ def get_visible_choices(location):
     
     
     """
+
+    # Once the GPS is installed, the mechanic dialogue at the 
+    # garage is not wanted (hide it.)
     if location == garage and gps_installed:
         return []
+    
+    # These locations are event triggers (boss fight, ending),
+    # not dialogue scenes.
     if location in (parade, destination, celebration):
         return []
     return list(location.choices.keys())
+
+
+
+# Scene Drawing Functions
 
 def draw_menu():
 
@@ -305,6 +332,9 @@ def draw_menu():
     leaves the right edge.
     
     """
+
+    # Fill the screen with black and draw the button and text over it
+    # Occurs in each scene/screen 
     screen.fill((0, 0, 0))
     start_button.draw(screen)
     title_text = title_font.render(
@@ -312,6 +342,9 @@ def draw_menu():
     screen.blit(title_text, (270, 100))
     pygame.draw.rect(screen, (255, 255, 255), (270, 150, 265, 5))
 
+    # Animate the bike: move 2 pixels right each frame. When the
+    # bike goes off the right edge, wrap it to just before the 
+    # left edge so it loops continuously.
     player_x_pos[0] += 2
     if player_x_pos[0] > 800:
         player_x_pos[0] = -70
@@ -367,6 +400,8 @@ def draw_location_screen():
     screen.blit(title_text, title_rect)
     pygame.draw.rect(screen, (255, 255, 255), (300, 85, 200, 5))
 
+    # Bordered Panel for the dialogue
+    # Occurs in every scene with a dialogue 
     panel = pygame.Rect(50, 90, 700, 300)
     pygame.draw.rect(screen, (0, 0, 0), panel)
     pygame.draw.rect(screen, (255, 255, 255), panel, 2)
@@ -508,7 +543,7 @@ def draw_shop_scene():
         panel.y + 15,
         panel.width - 30,
         font)
-
+    # Search input box where the player types item names
     input_box = pygame.Rect(200, 350, 400, 30)
     pygame.draw.rect(screen, (30, 30, 30), input_box)
     pygame.draw.rect(screen, (255, 255, 255), input_box, 2)
@@ -886,6 +921,14 @@ def click_route_option(option):
         current_screen = "ended_lose"
 
 def draw_police_screen(): 
+    """
+    Draw the police checkpoint screen with scan button.
+    
+    Shows the police dialogue and the Scan Licence button. The
+    actual scan logic (Bloom filter check) runs in the main 
+    event loop when the button is clicked.
+    
+    """
     screen.fill((0,0,0)) 
 
     title_text = title_font.render("Police Checkpoint", False, (255, 255, 255))
@@ -902,6 +945,12 @@ def draw_police_screen():
     #Scan button to process the licence
     scan_button.draw(screen)
 
+
+
+###Game state Installation
+
+# These globals are modified throughout the game. Most functions
+# that change them use the `global` keyword.
 current_screen = "menu"
 current_location = starting
 movement_history = Stack()
@@ -909,9 +958,13 @@ current_dialogue = ""
 player_inventory = Inventory()
 shop_search_text = ""
 
+
+# Progression flags
 gps_installed = False
 end_message = ""
 
+
+# Boss battle state
 boss_health = 3
 player_licence = assign_player_licence()
 boss_door = 0
@@ -925,6 +978,10 @@ optimal_route = []
 optimal_cost = 0
 route_map_message = ""
 
+# Static Buttons
+# Buttons that appear on multiple screens or have fixed positions.
+# Dynamic buttons (route, choice, door) are built each frame in
+# the builder functions below.
 start_button = Button(300, 400, 200, 50, "Start Game")
 continue_button = Button(300, 470, 200, 50, "Continue")
 leave_shop_button = Button(560, 395, 200, 40, "Leave Shop")
@@ -936,6 +993,9 @@ travel_button = Button(450, 460, 230, 60, "Choose Route")
 proceed_button = Button(300, 460, 200, 60, "Continue")
 scan_button = Button(300, 460, 200, 60, "Scan Licence")
 
+
+
+# Dynamic Button Builders
 def build_action_buttons(location):
 
     """
@@ -991,6 +1051,7 @@ def build_choice_buttons(location):
     """
     buttons = []
     choices = get_visible_choices(location)
+    #Taking the choices and its index to arrange the buttons
     for i, choice in enumerate(choices):
         x = (800 - 600) // 2
         y = 420 + i * 55
@@ -1006,7 +1067,7 @@ def build_route_buttons(location):
     
     Reads the visible routes for the location (filtered by
     get_visible_routes) and creates a button for each, formatted as
-    "Go to <location name>". The buttons are stacked vertically and
+    "Go to (location name)". The buttons are stacked vertically and
     centred horizontally.
     
     Args:
@@ -1019,6 +1080,7 @@ def build_route_buttons(location):
     """
     buttons = []
     routes = get_visible_routes(location)
+    #Taking the location and its index to arrange the buttons
     for i, route in enumerate(routes):
         x = (800 - 700) // 2
         y = 410 + i * 60
@@ -1034,7 +1096,7 @@ def travel_to(location):
     
     Updates the current location, pushes the previous one onto the
     movement history stack, and clears any active dialogue. Then handles
-    location-specific logic:
+    location specific logic:
         - parade: triggers the boss battle
         - shop: switches to the shop screen with item search
         - garage (from shop with GPS): mechanic installs GPS
@@ -1055,15 +1117,20 @@ def travel_to(location):
     global current_location, current_screen, current_dialogue
     global gps_installed, end_message
 
+
+    # Track the previous location so we can detect specific 
+    # transitions (e.g. shop -> garage triggers the mechanic).
     previous_location = current_location
     movement_history.push(previous_location)
     current_location = location
     current_dialogue = ""
 
+    #Parade: triggers the boss battle
     if current_location == parade:
         begin_find_boss()
         return
 
+    #Shop: switch to the shop screen with item search 
     if current_location == shop:
         current_screen = "shop"
         
@@ -1074,9 +1141,9 @@ def travel_to(location):
             "Items available: Raygun, GPS, Cap, Gloop"
         )
         return
-     
+    # GAarage: three different outcomes
     if current_location == garage: 
-
+        # Win path: came from shop carrying a GPS - mechanic installs it
         if movement_history.peek() == shop and player_inventory.has("GPS"):
             gps_installed = True
 
@@ -1086,16 +1153,16 @@ def travel_to(location):
                 "Best path: Garage -> Police Checkpoint -> Destination"
             )
             current_screen = "location"
-
+        # Normal entry: first visit from the starting point
         elif movement_history.peek() == starting: 
 
             current_screen = "location"
-
+        # Fail path: visited shop but didn't pick up GPS - game over
         else: 
             end_message = ("You didn't pick up the GPS in the shop.\n"
                 "You had to go back to the diner.\n"
                 "There you got really, really, really drunk.\n" 
-                "You were dissapointed in yourself.\n"
+                "You were disappointed in yourself.\n"
                 "In your misery you wandered out of the diner.\n"
                 "You got so lost you are still trying to find your way.\n"
                 "THE END")
@@ -1103,7 +1170,7 @@ def travel_to(location):
             current_screen = "ended_lose"       
         
             return
-    
+    # Police: switch to licence checkpoint screen 
     if current_location == police: 
         current_screen = "police"
         current_dialogue = ("POLICE CHECKPOINT\n" 
@@ -1111,12 +1178,17 @@ def travel_to(location):
         )
        
         return 
-
+    # Destination: show BFS path to celebration 
     if current_location == destination: 
-        # Use BFS to find path to celebration as the algorithm showcase
+        # Convert one-way edges to two-way so BFS can find a path.
+        # The graph was built directional for story reasons; for 
+        # the final pathfinding we need full connectivity.
         make_connections_reciprocal()
+        # Run breadth-first search as the main algorithm showcase
         path_to_celebration = bfs(destination, celebration)
 
+
+        # Format the path for display; fallback if BFS returns None
         path_text = " -> ".join(
             loc.name for loc in path_to_celebration) if path_to_celebration else "Celebration"
             
@@ -1129,7 +1201,7 @@ def travel_to(location):
         current_screen = "destination_reached" 
         
         return
-
+     # Celebration: trigger win ending
     if current_location == celebration:
         end_message = (
             "You made it to the celebration party!\n\n"
@@ -1138,12 +1210,17 @@ def travel_to(location):
         )
         current_screen = "ended_win"
         return
-
+    # Default - just show the new location's main screen
     current_screen = "location"
 
 
+
+# Main Game Loop
 while running:
 
+
+    # Rebuild dynamic buttons every frame so they update when
+    # the location or game state changes 
     action_buttons = build_action_buttons(current_location)
     choice_buttons = build_choice_buttons(current_location)
     route_buttons = build_route_buttons(current_location)
@@ -1152,9 +1229,11 @@ while running:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
-
+        
+        # Keyboard Input (shop search bar)
         if event.type == pygame.KEYDOWN and current_screen == "shop":
             if event.key == pygame.K_RETURN:
+                # Run search only when something has been typed
                 if shop_search_text.strip():
                     current_dialogue = search_shop(
                         shop, shop_search_text.strip(), player_inventory)
@@ -1162,6 +1241,8 @@ while running:
             elif event.key == pygame.K_BACKSPACE:
                 shop_search_text = shop_search_text[:-1]
             else:
+                # Only accept printable characters (filters Ctrl, Shift, etc.).
+                # Cap at 24 chars so text fits in the input box visually.
                 if event.unicode.isprintable() and len(shop_search_text) < 24:
                     shop_search_text += event.unicode
 
