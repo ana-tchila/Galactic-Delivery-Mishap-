@@ -1246,16 +1246,17 @@ while running:
                 if event.unicode.isprintable() and len(shop_search_text) < 24:
                     shop_search_text += event.unicode
 
+        #Mouse clicks
         if event.type == pygame.MOUSEBUTTONDOWN:
-
+             # Menu screen: Start Game button
             if current_screen == "menu":
                 if start_button.is_clicked(event.pos):
                     current_screen = "intro"
-
+             # Intro story: Continue button
             elif current_screen == "intro":
                 if continue_button.is_clicked(event.pos):
                     current_screen = "location"
-
+            # Main location view: branches to Talk or Travel
             elif current_screen == "location":
                 for button in action_buttons:
                     if button.is_clicked(event.pos):
@@ -1264,7 +1265,7 @@ while running:
                         elif button.text == "Choose Route":
                             current_screen = "routes"
                         break
-
+            # Dialogue choices screen
             elif current_screen == "choices":
                 for button in choice_buttons:
                     if button.is_clicked(event.pos):
@@ -1274,8 +1275,9 @@ while running:
                             current_dialogue = current_location.choices[button.text]
                             current_screen = "location"
                         break
-
+            # Travel route selection screen
             elif current_screen == "routes":
+                # Lookup table: convert button text back into a Location object
                 location_table = {
                     starting.name: starting, garage.name: garage,
                     diner.name: diner, shop.name: shop,
@@ -1291,12 +1293,12 @@ while running:
                             if target_name in location_table:
                                 travel_to(location_table[target_name])
                         break
-
+             # Shop screen: Leave Shop button (search is via keyboard)
             elif current_screen == "shop":
                 if leave_shop_button.is_clicked(event.pos):
                     current_screen = "location"
                     current_dialogue = ""
-                
+            # Police checkpoint: run Bloom filter scan on the licence    
             elif current_screen == "police": 
                 
                 if scan_button.is_clicked(event.pos): 
@@ -1324,43 +1326,45 @@ while running:
                         
                         # Terminate the game 
                         current_screen = "ended_lose"
-            
+            # Boss battle stage 1: door clicks (binary search)
             elif current_screen == "find_boss":
                 door_buttons = draw_find_boss()
                 for button in door_buttons:
                     if button.is_clicked(event.pos):
                         click_door(int(button.text))
                         break
-
+            # Boss battle stage 2: direction clicks (queue input)            
             elif current_screen == "attack_input":
                 direction_buttons = draw_attack_input()
                 for button in direction_buttons:
                     if button.is_clicked(event.pos):
                         click_direction(button.text)
                         break
-
+            # Stage 2 fail: continue to stage 3            
             elif current_screen == "attack_failed":
                 if continue_to_route_button.is_clicked(event.pos):
                     begin_route_map()
-
+             # Boss battle stage 3: route option clicks (Dijkstra)
             elif current_screen == "route_map":
                 option_buttons = draw_route_map()
                 for button in option_buttons:
                     if button.is_clicked(event.pos):
                         click_route_option(button.text)
                         break
-
+             # Boss defeated: continue to destination            
             elif current_screen == "after_boss":
                 if proceed_button.is_clicked(event.pos):
                     travel_to(destination)
-
+            # Reached destination: continue to celebration
             elif current_screen == "destination_reached":
                 if proceed_button.is_clicked(event.pos):
                     travel_to(celebration)
-
+            # Win/lose screens: Play Again button resets the game
             elif current_screen in ("ended_win", "ended_lose"):
                 if restart_button.is_clicked(event.pos):
 
+
+                    # Reset ALL game state to initial values
                     current_screen = "menu"
                     current_location = starting
                     movement_history = Stack()
@@ -1372,10 +1376,15 @@ while running:
                     boss_health = 3
                     player_licence = assign_player_licence()
 
+    # TIMER: auto-advance from sequence display to input 
+    # After showing the signal sequence for 5 seconds, automatically
+    # switch to the input stage. This forces the player to rely on 
+    # memory rather than reading the sequence as they enter it.
     if current_screen == "show_sequence":
         if pygame.time.get_ticks() - sequence_show_time > 5000:
             begin_attack_input()
 
+    #Draw the current screen 
     if current_screen == "menu":
         draw_menu()
     elif current_screen == "intro":
