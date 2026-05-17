@@ -23,18 +23,55 @@ except pygame.error:
     print("Music file not found, continuing without sound.")
 pygame.mixer.music.play(-1)
 running = True
+try:
+    title_font = pygame.font.Font('font/Pixeltype.ttf', size=40)
+    font = pygame.font.Font('font/Pixeltype.ttf', size=26)
+    small_font = pygame.font.Font('font/Pixeltype.ttf', size=20)
+except FileNotFoundError:
+    print("Custom font not found — falling back to default font.")
+    title_font = pygame.font.SysFont(None, 40)
+    font = pygame.font.SysFont(None, 26)
+    small_font = pygame.font.SysFont(None, 20)
+try:
+    player = pygame.image.load('player/bike.png')
+    smaller_player = pygame.transform.scale(player, (70, 70))
+except (pygame.error, FileNotFoundError):
+    # Fallback to a coloured rectangle if the image is missing
+    print("Player image not found — using fallback rectangle.")
+    smaller_player = pygame.Surface((70, 70))
+    smaller_player.fill((100, 200, 255))
 
-title_font = pygame.font.Font('font/Pixeltype.ttf', size=40)
-font = pygame.font.Font('font/Pixeltype.ttf', size=26)
-small_font = pygame.font.Font('font/Pixeltype.ttf', size=20)
-player = pygame.image.load('player/bike.png')
-smaller_player = pygame.transform.scale(player, (70, 70))
 player_x_pos = [0]
 
 # the Button class represents interactive buttons in the GUI, with methods
 # to draw itself and check for clicks and hover states.
 class Button:
+    """
+    A clickable rectangular button with text label and hover effect.
+    Buttons store their position, dimensions, and label text. The class
+    provides methods to render the button, detect mouse clicks, and 
+    detect mouse hover (which changes the border colour).
+    
+    Attributes:
+        x (int): Top-left x coordinate of the button.
+        y (int): Top-left y coordinate of the button.
+        width (int): Width of the button in pixels.
+        height (int): Height of the button in pixels.
+        text (str): Text label displayed on the button.
+    
+    """
     def __init__(self, x, y, width, height, text):
+        """
+        Initialise a button with position, size, and text label.
+        
+        Args:
+            x: Top-left x coordinate.
+            y: Top-left y coordinate.
+            width: Button width in pixels.
+            height: Button height in pixels.
+            text: Label text shown on the button.
+
+        """
         self.x = x
         self.y = y
         self.width = width
@@ -42,6 +79,19 @@ class Button:
         self.text = text
 
     def draw(self, surface):
+
+        """
+        
+        Render the button on the given Pygame surface.
+        
+        The button is drawn with a white fill and a black text label.
+        The border changes colour when the mouse is hovering over it.
+        Long text uses a smaller font to fit within the button.
+        
+        Args:
+            surface: The Pygame surface to draw the button on.
+        
+        """
         pygame.draw.rect(surface, (255, 255, 255),
                          (self.x, self.y, self.width, self.height))
         chosen_font = small_font if len(self.text) > 18 else font
@@ -59,14 +109,53 @@ class Button:
                              (self.x, self.y, self.width, self.height), 3)
 
     def is_clicked(self, pos):
+        """
+        Check if a position lies within the button's bounds.
+        
+        Args:
+            pos: A (x, y) tuple representing the mouse position.
+        
+        Returns:
+            True if pos is inside the button rectangle.
+
+        """
         return self.x <= pos[0] <= self.x + \
             self.width and self.y <= pos[1] <= self.y + self.height
 
     def is_hovered(self, pos):
+        """
+        
+        Check if the mouse is hovering over the button.
+        
+        Currently identical to is_clicked since both check whether
+        the mouse position falls inside the button's bounds.
+        
+        Args:
+            pos: A (x, y) tuple representing the mouse position.
+        
+        Returns:
+            True if pos is inside the button rectangle.
+        
+        """
         return self.is_clicked(pos)
 
 
 def wrap_text(text, font, max_width):
+    """
+    Wrap long text into multiple lines that fit within a maximum width,
+    as it splits the input text into words and groups them into lines based on
+    the rendered pixel width of the given font. 
+    
+    Args:
+        text: The input string to wrap.
+        font: The Pygame font object used to measure text width.
+        max_width: Maximum pixel width for each line.
+    
+    Returns:
+      A list of strings, each fitting within max_width.
+    
+    """
+
     words = text.split(' ')
     lines = []
     for paragraph in str(text).split('\n'):
@@ -89,6 +178,30 @@ def wrap_text(text, font, max_width):
 
 def render_text_block(text, x, y, max_width, font_used,
                       color=(255, 255, 255), line_spacing=5):
+    
+    """
+    
+    Render wrapped text onto the screen at a given position,
+    as it wraps the text using wrap_text(), then renders each line below
+    the previous one with consistent spacing. Returns the y-coordinate
+    immediately after the last rendered line for chained rendering.
+    
+    Args:
+        text: The text string to render (can contain \\n for line breaks).
+        x: The x-coordinate where rendering begins.
+        y: The y-coordinate where the first line is drawn.
+        max_width: Maximum pixel width before wrapping to a new line.
+        font_used: The Pygame font object used to render text.
+        color: RGB tuple for text colour. Defaults to white.
+        line_spacing: Extra pixels between consecutive lines.
+    
+    Returns:
+        int: The y-coordinate just below the last rendered line.
+    
+    
+    
+    """
+
     lines = wrap_text(text, font_used, max_width)
     for line in lines:
         text_surface = font_used.render(line, True, color)
@@ -98,6 +211,17 @@ def render_text_block(text, x, y, max_width, font_used,
 
 
 def draw_inventory_bar():
+
+    """
+    
+    Draw the player's inventory as a horizontal bar at the bottom of the screen.
+    
+    The bar shows a comma-separated list of items currently held by the
+    player. If the inventory is empty, it displays "Empty" instead.
+    
+    Uses the global player_inventory variable as its data source.
+    
+    """
     pygame.draw.rect(screen, (40, 40, 40), (0, 555, 800, 45))
     pygame.draw.line(screen, (255, 255, 255), (0, 555), (800, 555), 2)
 
@@ -111,6 +235,24 @@ def draw_inventory_bar():
 
 
 def get_visible_routes(location):
+
+    """
+    
+    Return the list of route names visible at a given location.
+    
+    Not all graph connections should be shown to the player. This function
+    filters the available routes based on the story flow and game state
+    (e.g. the police checkpoint is only visible at the garage after the
+    GPS has been installed by the mechanic).
+    
+    Args:
+        location: A Location object from the graph.
+    
+    Returns:
+         Names of locations the player can travel to from here
+    
+    
+    """
     if location == starting:
         return [garage.name, diner.name]
     elif location == diner:
@@ -127,6 +269,24 @@ def get_visible_routes(location):
     return []
 
 def get_visible_choices(location):
+
+    """
+    
+    Return the dialogue choices visible at a given location.
+    
+    Filters out dialogue options that no longer make sense given the
+    game state. For example, the mechanic dialogue at the garage is
+    hidden once the GPS has been installed.
+    
+    Args:
+        location: A Location object from the graph.
+    
+    Returns:
+        Choice text strings available at this location.
+    
+    
+    
+    """
     if location == garage and gps_installed:
         return []
     if location in (parade, destination, celebration):
@@ -134,6 +294,17 @@ def get_visible_choices(location):
     return list(location.choices.keys())
 
 def draw_menu():
+
+    """
+    
+    Draw the main menu screen with title and animated bike.
+    
+    Renders the game title, the Start Game button, and a player with a bike
+    that scrolls across the screen. The player position updates each
+    frame using the player_x_pos global, wrapping around when it
+    leaves the right edge.
+    
+    """
     screen.fill((0, 0, 0))
     start_button.draw(screen)
     title_text = title_font.render(
@@ -147,6 +318,17 @@ def draw_menu():
     screen.blit(smaller_player, (player_x_pos[0], 200))
 
 def draw_intro():
+
+
+    """
+    
+    Draw the story introduction screen shown after Start Game.
+    
+    Displays the game title and a short narrative explaining that the
+    player's GPS has failed. Includes a Continue button that proceeds
+    to the first location screen when clicked.
+    
+    """
     screen.fill((0, 0, 0))
     title_text = title_font.render(
         "Intergalactic Delivery", False, (255, 255, 255))
@@ -164,6 +346,20 @@ def draw_intro():
     continue_button.draw(screen)
 
 def draw_location_screen():
+
+    """
+    
+    Draw the main location view with description and action buttons.
+    
+    Shows the current location's name, its description, and any active
+    dialogue inside a bordered panel. Renders the action buttons
+    (Talk / Search and/or Choose Route) below the panel, plus the
+    inventory bar at the bottom.
+    
+    Uses globals: current_location, current_dialogue, action_buttons.
+    
+    
+    """
     screen.fill((0, 0, 0))
     title_text = title_font.render(
         current_location.name, False, (255, 255, 255))
@@ -191,6 +387,21 @@ def draw_location_screen():
     draw_inventory_bar()
 
 def draw_choice_screen():
+    
+
+    """
+    
+    Draw the dialogue choice screen at the current location.
+    
+    Displays the location description, any existing dialogue, a hint
+    line, and the list of dialogue choice buttons. The player clicks
+    a button to talk to that character or selects Back to return to
+    the location screen.
+    
+    Uses globals: current_location, current_dialogue, choice_buttons.
+    
+    
+    """
     screen.fill((0, 0, 0))
     title_text = title_font.render(
         current_location.name, False, (255, 255, 255))
@@ -222,6 +433,19 @@ def draw_choice_screen():
     draw_inventory_bar()
 
 def draw_route_screen():
+
+    """
+    
+    Draw the route selection screen with travel buttons.
+    
+    Lists the visible routes from the current location as buttons. The
+    player clicks a button to travel there or selects Back to return
+    to the location screen.
+    
+    Uses globals: current_location, route_buttons.
+    
+    
+    """
     screen.fill((0, 0, 0))
     title_text = title_font.render(
         current_location.name, False, (255, 255, 255))
@@ -250,6 +474,20 @@ def draw_route_screen():
     draw_inventory_bar()
 
 def draw_shop_scene():
+
+    """
+    
+    Draw the antique shop screen with item search interface.
+    
+    Renders the shop description, the shopkeeper's dialogue or last
+    search result, a text input box for typing item names, and the
+    Leave Shop button. The player types an item name and presses
+    Enter to run a linear search against the shop's inventory.
+    
+    Uses globals: shop, current_dialogue, shop_search_text.
+    
+    
+    """
     screen.fill((0, 0, 0))
 
     title_text = title_font.render("Shop", False, (255, 255, 255))
@@ -284,6 +522,20 @@ def draw_shop_scene():
     draw_inventory_bar()
 
 def draw_ending_screen(won):
+
+    """
+    
+    Draw the final win or lose screen with the closing message.
+    
+    Shows a green "Congratulations!" title for wins, or a red
+    "Game Over" title for losses, followed by the end_message text
+    inside a bordered panel. A Play Again button below resets the
+    game state and returns to the main menu.
+    
+    Args:
+        won: True for the win screen, False for the lose screen.
+    
+    """
     screen.fill((0, 0, 0))
     if won:
         title_text = title_font.render(
@@ -412,8 +664,8 @@ def draw_signal_sequence():
     pygame.draw.rect(screen, (0, 0, 0), panel)
     pygame.draw.rect(screen, (255, 255, 255), panel, 2)
 
-    sequance_dispaly = "   ".join(signal_sequence) # Adds spaces between the signals for better display 
-    info = (f"Memorize the sequence: {sequance_dispaly}\n\n"
+    sequence_dispaly = "   ".join(signal_sequence) # Adds spaces between the signals for better display 
+    info = (f"Memorize the sequence: {sequence_dispaly}\n\n"
             f"You have 5 seconds to memorize the sequence")
     render_text_block(info, panel.x + 15, panel.y + 15, panel.width - 30, font)
 
@@ -449,10 +701,10 @@ def draw_attack_input():
     start_x = (800 - (2 * button_width + gap)) // 2
     start_y = 400
 
-    for lebal, row, col in layout: # Create buttons for each direction 
+    for label, row, col in layout: # Create buttons for each direction 
         x = start_x + col * (button_width + gap)
         y = start_y + row * (button_height + gap)
-        button = Button(x, y, button_width, button_height, lebal)
+        button = Button(x, y, button_width, button_height, label)
         button.draw(screen)
         direction_buttons.append(button)
    
@@ -685,6 +937,26 @@ proceed_button = Button(300, 460, 200, 60, "Continue")
 scan_button = Button(300, 460, 200, 60, "Scan Licence")
 
 def build_action_buttons(location):
+
+    """
+    
+    
+    Build the list of action buttons shown at a given location.
+    
+    Decides whether to show the Talk / Search button, the Choose Route
+    button, or both. If only one applies, a single centred button is
+    returned; if both apply, the static talk_button and travel_button
+    are used side by side.
+    
+    Args:
+        location: The current Location object.
+    
+    Returns:
+        list[Button]: The action buttons appropriate for this location.
+    
+    
+    
+    """
     buttons = []
     has_choices = get_visible_choices(location)
     has_routes = get_visible_routes(location)
@@ -700,6 +972,23 @@ def build_action_buttons(location):
     return buttons
 
 def build_choice_buttons(location):
+
+    """
+    
+    Build the list of dialogue choice buttons for a given location.
+    
+    Reads the visible choices for the location (filtered by
+    get_visible_choices) and creates a button for each, stacked
+    vertically and centred horizontally.
+    
+    Args:
+        location: The current Location object.
+    
+    Returns:
+        list[Button]: The choice buttons for this location.
+    
+    
+    """
     buttons = []
     choices = get_visible_choices(location)
     for i, choice in enumerate(choices):
@@ -710,6 +999,24 @@ def build_choice_buttons(location):
 
 
 def build_route_buttons(location):
+
+    """
+    
+    Build the list of travel route buttons for a given location.
+    
+    Reads the visible routes for the location (filtered by
+    get_visible_routes) and creates a button for each, formatted as
+    "Go to <location name>". The buttons are stacked vertically and
+    centred horizontally.
+    
+    Args:
+        location: The current Location object.
+    
+    Returns:
+        list[Button]: The route buttons for this location.
+    
+    
+    """
     buttons = []
     routes = get_visible_routes(location)
     for i, route in enumerate(routes):
@@ -720,6 +1027,31 @@ def build_route_buttons(location):
 
 
 def travel_to(location):
+
+    """
+    
+    Move the player to a new location and trigger associated events.
+    
+    Updates the current location, pushes the previous one onto the
+    movement history stack, and clears any active dialogue. Then handles
+    location-specific logic:
+        - parade: triggers the boss battle
+        - shop: switches to the shop screen with item search
+        - garage (from shop with GPS): mechanic installs GPS
+        - garage (from shop without GPS): triggers the lose ending
+        - police: switches to the licence checkpoint screen
+        - destination: shows BFS path to celebration
+        - celebration: triggers the win ending
+    
+    Args:
+        location: The Location object to travel to.
+    
+    Side effects:
+        Modifies several globals: current_location, current_screen,
+        current_dialogue, gps_installed, end_message.
+    
+    
+    """
     global current_location, current_screen, current_dialogue
     global gps_installed, end_message
 
@@ -961,7 +1293,7 @@ while running:
                     player_licence = assign_player_licence()
 
     if current_screen == "show_sequence":
-        if pygame.time.get_ticks() - sequence_show_time > 4000:
+        if pygame.time.get_ticks() - sequence_show_time > 5000:
             begin_attack_input()
 
     if current_screen == "menu":
