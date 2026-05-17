@@ -220,7 +220,7 @@ if __name__ == "__main__": # For the GUI to work
 # Actual game loop 
     current_location = starting
     movement_history = Stack() # Stack to keep track of the movement history 
-    player_inventory = inventory() 
+    player_inventory = Inventory()
 
     while game_running: 
 
@@ -258,7 +258,7 @@ if __name__ == "__main__": # For the GUI to work
             print("POLICE CHECKPOINT")
             print("Officer: Show your licence")
             
-            player_licence = assign_player_licence
+            player_licence = assign_player_licence()
             
             print(f"Here is my licence: {player_licence}")
             
