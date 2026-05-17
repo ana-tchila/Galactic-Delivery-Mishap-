@@ -47,8 +47,6 @@ class Inventory:
         return search(self.items, item) is not None
 
 
-
-
 # Searching the system 
 
 def search_shop(shop_choices, item_wanted, player_inventory):
@@ -86,5 +84,6 @@ def search_shop(shop_choices, item_wanted, player_inventory):
     player_inventory.add_item(offered_item)
     return f"{descriptions}\n\nYou take the {offered_item}."
     
-   
+
+inventory = Inventory
 

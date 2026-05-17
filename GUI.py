@@ -1218,7 +1218,6 @@ while running:
                 
             elif current_screen == "police": 
                 
-                #Checks if the scan button is clicked 
                 if scan_button.is_clicked(event.pos): 
                     
                     # Use the Bloom Filter instance
