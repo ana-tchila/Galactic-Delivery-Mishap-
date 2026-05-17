@@ -257,10 +257,12 @@ if __name__ == "__main__": # For the GUI to work
         elif current_location == police: 
             print("POLICE CHECKPOINT")
             print("Officer: Show your licence")
-
+            
+            player_licence = assign_player_licence
+            
             print(f"Here is my licence: {player_licence}")
             
-            result = police_scan(assign_player_licence)
+            result = police_scan(player_licence)
 
             if result == "Access Denied": 
                 print("GAME OVER")
