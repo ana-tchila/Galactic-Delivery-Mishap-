@@ -1166,10 +1166,12 @@ def travel_to(location):
                 "Best path: Garage -> Police Checkpoint -> Destination"
             )
             current_screen = "location"
+            return
         # Normal entry: first visit from the starting point
         elif movement_history.peek() == starting:
 
             current_screen = "location"
+            return
         # Fail path: visited shop but didn't pick up GPS - game over
         else:
             end_message = ("You didn't pick up the GPS in the shop.\n"
