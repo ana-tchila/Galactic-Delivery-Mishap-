@@ -22,21 +22,17 @@ class BloomFilter(object):
         fp_prob :Desired false positive probability
         """ 
         self.fp_prob = fp_prob 
-
-        # Size of the bit array needed 
+     
         self.size = self.get_size(items_count, fp_prob)
 
-        self.bit_array = bitarray(self.size) #Creates the bit array 
-        self.bit_array.setall(0) # Set all the bits to zero 
+        self.bit_array = bitarray(self.size)
 
-        # Number of hash function needed 
         self.hash_count = self.get_hash_count(self.size, items_count) 
     
     def add(self, item: str) -> None: 
         """ Adds an item in the filter""" 
         digests = []
 
-        # Iterates through multiple hash functions
         for i in range(self.hash_count): 
 
             digest = mmh3.hash(item, i) % self.size 
@@ -52,15 +48,15 @@ class BloomFilter(object):
     def check(self, item: str) -> bool: 
         """ Checks if an item is present""" 
 
-        for i in range(self.hash_count): # Iterates through 
+        for i in range(self.hash_count): 
 
-            digest = mmh3.hash(item,i) % self.size #Hashes 
+            digest = mmh3.hash(item,i) % self.size 
 
-            if self.bit_array[digest] == False: #Checks if any bit position is False 
+            if self.bit_array[digest] == False: 
 
-                return False # Returns False 
+                return False 
 
-        return True # Returns True 
+        return True 
 
     @classmethod 
     def get_size(self, n: int, p: float) -> int: 

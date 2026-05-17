@@ -11,7 +11,7 @@ from Graph import (
     celebration, Stack, bfs, make_connections_reciprocal
 )
 from shop_system import Inventory, search_shop
-from police_station import assign_player_licence, police_scan
+from police_station import assign_player_licence, police_scan, all_licences
 
 
 # Pygame intsallation and asset
@@ -1076,7 +1076,7 @@ def travel_to(location):
             "Items available: Raygun, GPS, Cap, Gloop"
         )
         return
-    # GAarage: three different outcomes
+    # Garage: three different outcomes
     if current_location == garage:
         # Win path: came from shop carrying a GPS - mechanic installs it
         if movement_history.peek() == shop and player_inventory.has("GPS"):
@@ -1232,9 +1232,9 @@ while running:
 
                 if scan_button.is_clicked(event.pos):
 
-                    # Use the Bloom Filter instance
-                    result = police_scan(player_licence)
-
+                    current_dialogue =(
+                        f"Select your licence:" 
+                        ) 
                     if result == "Let the driver pass":
 
                         current_dialogue = (
@@ -1242,7 +1242,6 @@ while running:
                             "Officer: Licence is valid\n"
                             "Let driver pass.\n"
                         )
-
                         # Let's the player pick the location
                         current_screen = "location"
 
