@@ -1037,6 +1037,13 @@ def draw_licence_select():
  
  
 def draw_police_screen(): 
+    """
+    Draw the police checkpoint screen with scan button.
+    
+    Shows the police dialogue and the Scan Licence button. The
+    actual scan logic (Bloom filter check) runs in the main 
+    event loop when the button is clicked.
+    """
     screen.fill((0,0,0)) #Fill screen
  
     title_text = title_font.render("Police Checkpoint", False, (255, 255, 255))
@@ -1054,6 +1061,7 @@ def draw_police_screen():
     scan_button.draw(screen)
 
 def travel_to_police(licence):
+    """Police screen that asks the user for their licence"""
     global current_screen, current_dialogue, player_licence
     player_licence = licence
     current_dialogue = (
@@ -1101,6 +1109,20 @@ proceed_button = Button(300, 460, 200, 60, "Continue")
 scan_button = Button(300, 460, 200, 60, "Scan Licence")
  
 def build_action_buttons(location):
+    """
+    Build the list of action buttons shown at a given location.
+    
+    Decides whether to show the Talk / Search button, the Choose Route
+    button, or both. If only one applies, a single centred button is
+    returned; if both apply, the static talk_button and travel_button
+    are used side by side.
+    
+    Args:
+        location: The current Location object.
+    
+    Returns:
+        list[Button]: The action buttons appropriate for this location.
+    """
     buttons = []
     has_choices = get_visible_choices(location)
     has_routes = get_visible_routes(location)
@@ -1116,6 +1138,19 @@ def build_action_buttons(location):
     return buttons
  
 def build_choice_buttons(location):
+    """
+    Build the list of dialogue choice buttons for a given location.
+    
+    Reads the visible choices for the location (filtered by
+    get_visible_choices) and creates a button for each, stacked
+    vertically and centred horizontally.
+    
+    Args:
+        location: The current Location object.
+    
+    Returns:
+        list[Button]: The choice buttons for this location.
+    """
     buttons = []
     choices = get_visible_choices(location)
     for i, choice in enumerate(choices):
@@ -1126,6 +1161,20 @@ def build_choice_buttons(location):
  
  
 def build_route_buttons(location):
+    """
+    Build the list of travel route buttons for a given location.
+    
+    Reads the visible routes for the location (filtered by
+    get_visible_routes) and creates a button for each, formatted as
+    "Go to (location name)". The buttons are stacked vertically and
+    centred horizontally.
+    
+    Args:
+        location: The current Location object.
+    
+    Returns:
+        list[Button]: The route buttons for this location.
+    """
     buttons = []
     routes = get_visible_routes(location)
     for i, route in enumerate(routes):
@@ -1136,6 +1185,27 @@ def build_route_buttons(location):
  
  
 def travel_to(location):
+    """
+    Move the player to a new location and trigger associated events.
+    
+    Updates the current location, pushes the previous one onto the
+    movement history stack, and clears any active dialogue. Then handles
+    location specific logic:
+        - parade: triggers the boss battle
+        - shop: switches to the shop screen with item search
+        - garage (from shop with GPS): mechanic installs GPS
+        - garage (from shop without GPS): triggers the lose ending
+        - police: switches to the licence checkpoint screen
+        - destination: shows BFS path to celebration
+        - celebration: triggers the win ending
+    
+    Args:
+        location: The Location object to travel to.
+    
+    Side effects:
+        Modifies several globals: current_location, current_screen,
+        current_dialogue, gps_installed, end_message.
+    """
     global current_location, current_screen, current_dialogue
     global gps_installed, end_message
  
