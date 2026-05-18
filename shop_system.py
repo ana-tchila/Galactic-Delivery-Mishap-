@@ -125,3 +125,4 @@ def search_shop(shop_choices, item_wanted, player_inventory):
     return f"{descriptions}\n\nYou take the {offered_item}."
     
 
+#5752030
