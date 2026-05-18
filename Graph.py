@@ -9,7 +9,7 @@ import os
 from boss_game import find_boss, space_boss_battle, route_map_challenge
 from shop_system import Inventory, search_shop 
 from shop_system import Inventory, search_shop 
-from police_station import police_scan, assign_player_licence
+from police_station import police_scan, player_licence, all_licences
 
 
 class Location:
@@ -214,9 +214,8 @@ if __name__ == "__main__": # for the GUI
         
         else: 
             print("Invalid input, please enter yes or no.") 
-
-
-# Actual game loop 
+ 
+ #Test game loop 
     current_location = starting
     movement_history = Stack()
     player_inventory = Inventory()
@@ -258,8 +257,7 @@ if __name__ == "__main__": # for the GUI
             print("POLICE CHECKPOINT")
             print("Officer: Show your licence")
 
-            print(f"Here is my licence: {player_licence}")
-            result = police_scan(player_licence)
+            
 
             if result == "Access Denied": 
                 print("GAME OVER")

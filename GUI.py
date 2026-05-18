@@ -10,7 +10,7 @@ from Graph import (
     celebration, Stack, bfs, make_connections_reciprocal
 )
 from shop_system import search, inventory, search_shop
-from police_station import generate_licence, police_scan, player_licence
+from police_station import generate_licence, police_scan, player_licence, all_licences
 
 
 pygame.init()
@@ -790,6 +790,7 @@ def click_route_option(option):
             "You defeated the Alien King! You can now take his ship anywhere."
         )
         current_screen = "after_boss"
+        return
 
     else:
         # Player picked a slower route and got caught
@@ -798,6 +799,7 @@ def click_route_option(option):
             "Game over."
         )
         current_screen = "ended_lose"
+        return 
 
 # 5758609
 def draw_licence_select():
@@ -962,11 +964,13 @@ def travel_to(location):
             )
             current_screen = "location"
         else:
-            end_message = ("You return to the garage empty-handed.\n\n"
-                           "Mechanic: You came back with nothing? "
-                           "I can't fix your GPS without the part!\n\n"
-                           "Without a GPS, you can't find Brad Cooper's house. "
-                           "The delivery fails. Your boss fires you on the spot."
+            end_message = ("You didn't pick up the GPS in the shop.\n"
+                    "You had to go back to the diner.\n"
+                    "There you got really, really, really drunk.\n" 
+                    "You were dissapointed in yourself.\n"
+                    "In your misery you wandered out of the diner.\n"
+                    "You got so lost you are still trying to find your way.\n"
+                    "THE END"
                            )
             current_screen = "ended_lose"
         return
@@ -977,7 +981,6 @@ def travel_to(location):
         return
  
     if current_location == destination:
-        if player_inventory.has("GPS"):
             # Use BFS to find path to celebration as the algorithm showcase
             make_connections_reciprocal()
             path_to_celebration = bfs(destination, celebration)
@@ -990,14 +993,7 @@ def travel_to(location):
                 f"GPS calculating route to celebration:\n{path_text}"
             )
             current_screen = "destination_reached"
-        else:
-            end_message = (
-                "Without a GPS, you wandered the streets and couldn't find "
-                "Brad Cooper's house. The food arrived cold and late. "
-                "Your boss is furious. You're fired."
-            )
-            current_screen = "ended_lose"
-        return
+            return 
  
     if current_location == celebration:
         end_message = (
