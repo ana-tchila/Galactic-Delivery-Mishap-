@@ -858,7 +858,17 @@ def draw_police_screen():
  
     #Scan button to process the licence
     scan_button.draw(screen)
- 
+
+def travel_to_police(licence):
+    global current_screen, current_dialogue, player_licence
+    player_licence = licence
+    current_dialogue = (
+        "POLICE CHECKPOINT\n"
+        f"Your licence: {player_licence}\n"
+        "Officer: Let me scan that."
+    )
+    current_screen = "police"
+
  
 current_screen = "menu"
 current_location = starting
@@ -1086,13 +1096,7 @@ while running:
                 licence_buttons = draw_licence_select()
                 for button in licence_buttons:
                     if button.is_clicked(event.pos):
-                        player_licence = button.text
-                        current_dialogue = (
-                            "POLICE CHECKPOINT\n"
-                            f"Your licence: {player_licence}\n"
-                            "Officer: Let me scan that."
-                        )
-                        current_screen = "police"
+                        travel_to_police(button.text)
                         break
  
             elif current_screen == "police": 
