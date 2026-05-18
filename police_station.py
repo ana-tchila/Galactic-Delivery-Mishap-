@@ -15,7 +15,6 @@ class BloomFilter(object):
     - MurmurHash3 Hash functions 
     - A bit array
     """ 
- 
     def __init__(self, items_count, fp_prob): 
         """ Constructor for Bloom filter 
  
@@ -23,7 +22,6 @@ class BloomFilter(object):
         items_count: Number of items expected to be stored. 
         fp_prob :Desired false positive probability
         """ 
- 
         self.fp_prob = fp_prob # Stores false positive probability 
  
         # Size of the bit array needed 
@@ -36,7 +34,7 @@ class BloomFilter(object):
     
     def add(self, item): 
         """ Adds an item in the filter""" 
- 
+
         digests = []
  
         for i in range(self.hash_count): 
@@ -51,7 +49,6 @@ class BloomFilter(object):
         for i in range(self.hash_count):
  
             digest = mmh3.hash(item, i) % self.size
- 
             if self.bit_array[digest] == False:
  
                 return False

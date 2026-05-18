@@ -84,6 +84,5 @@ def search_shop(shop_choices, item_wanted, player_inventory):
     player_inventory.add_item(offered_item)
     return f"{descriptions}\n\nYou take the {offered_item}."
     
-
-inventory = Inventory
+inventory = Inventory # The Graph.py imports inventory
 

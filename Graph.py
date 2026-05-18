@@ -219,8 +219,7 @@ if __name__ == "__main__": # for the GUI
     current_location = starting
     movement_history = Stack()
     player_inventory = Inventory()
-    player_licence = assign_player_licence()
-
+    
     while game_running: 
 
         print(f"Current Loccation: {current_location.description}")
@@ -257,7 +256,13 @@ if __name__ == "__main__": # for the GUI
             print("POLICE CHECKPOINT")
             print("Officer: Show your licence")
 
-            
+            print("\nAvailable licences:")
+            for licence in all_licences:
+                print(licence)
+
+            player_licence = input("\nType your licence: ").strip()
+
+            result = police_scan(player_licence)
 
             if result == "Access Denied": 
                 print("GAME OVER")
