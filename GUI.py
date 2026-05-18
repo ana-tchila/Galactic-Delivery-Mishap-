@@ -127,7 +127,7 @@ class Button:
         """
         return self.is_clicked(pos)
 
-
+# Text rendering helpers
 def wrap_text(text, font, max_width):
     """
     Wrap long text into multiple lines that fit within a maximum width,
@@ -164,6 +164,24 @@ def wrap_text(text, font, max_width):
 
 def render_text_block(text, x, y, max_width, font_used,
                       color=(255, 255, 255), line_spacing=5):
+    """
+    Render wrapped text onto the screen at a given position,
+    as it wraps the text using wrap_text(), then renders each line below
+    the previous one with consistent spacing. Returns the y-coordinate
+    immediately after the last rendered line for chained rendering.
+    
+    Args:
+        text: The text string to render (can contain \\n for line breaks).
+        x: The x-coordinate where rendering begins.
+        y: The y-coordinate where the first line is drawn.
+        max_width: Maximum pixel width before wrapping to a new line.
+        font_used: The Pygame font object used to render text.
+        color: RGB tuple for text colour. Defaults to white.
+        line_spacing: Extra pixels between consecutive lines.
+    
+    Returns:
+        int: The y-coordinate just below the last rendered line.
+    """
     lines = wrap_text(text, font_used, max_width)
     for line in lines:
         text_surface = font_used.render(line, True, color)
@@ -173,6 +191,14 @@ def render_text_block(text, x, y, max_width, font_used,
 
 
 def draw_inventory_bar():
+    """
+    Draw the player's inventory as a horizontal bar at the bottom of the screen.
+    
+    The bar shows a comma-separated list of items currently held by the
+    player. If the inventory is empty, it displays "Empty" instead.
+    
+    Uses the global player_inventory variable as its data source.
+    """
     pygame.draw.rect(screen, (40, 40, 40), (0, 555, 800, 45))
     pygame.draw.line(screen, (255, 255, 255), (0, 555), (800, 555), 2)
 
