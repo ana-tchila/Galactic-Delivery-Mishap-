@@ -176,6 +176,24 @@ def wrap_text(text, font, max_width):
 
 def render_text_block(text, x, y, max_width, font_used,
                       color=(255, 255, 255), line_spacing=5):
+    """
+    Render wrapped text onto the screen at a given position,
+    as it wraps the text using wrap_text(), then renders each line below
+    the previous one with consistent spacing. Returns the y-coordinate
+    immediately after the last rendered line for chained rendering.
+    
+    Args:
+        text: The text string to render (can contain \\n for line breaks).
+        x: The x-coordinate where rendering begins.
+        y: The y-coordinate where the first line is drawn.
+        max_width: Maximum pixel width before wrapping to a new line.
+        font_used: The Pygame font object used to render text.
+        color: RGB tuple for text colour. Defaults to white.
+        line_spacing: Extra pixels between consecutive lines.
+    
+    Returns:
+        int: The y-coordinate just below the last rendered line.
+    """
     lines = wrap_text(text, font_used, max_width)
     for line in lines:
         text_surface = font_used.render(line, True, color)
@@ -185,6 +203,14 @@ def render_text_block(text, x, y, max_width, font_used,
 
 
 def draw_inventory_bar():
+    """
+    Draw the player's inventory as a horizontal bar at the bottom of the screen.
+    
+    The bar shows a comma-separated list of items currently held by the
+    player. If the inventory is empty, it displays "Empty" instead.
+    
+    Uses the global player_inventory variable as its data source.
+    """
     pygame.draw.rect(screen, (40, 40, 40), (0, 555, 800, 45))
     pygame.draw.line(screen, (255, 255, 255), (0, 555), (800, 555), 2)
 
@@ -198,6 +224,20 @@ def draw_inventory_bar():
 
 
 def get_visible_routes(location):
+    """
+    Return the list of route names visible at a given location.
+    
+    Not all graph connections should be shown to the player. This function
+    filters the available routes based on the story flow and game state
+    (e.g. the police checkpoint is only visible at the garage after the
+    GPS has been installed by the mechanic).
+    
+    Args:
+        location: A Location object from the graph.
+    
+    Returns:
+         Names of locations the player can travel to from here
+    """
     if location == starting:
         return [garage.name, diner.name]
     elif location == diner:
@@ -218,14 +258,19 @@ def get_visible_routes(location):
 
 
 def get_visible_choices(location):
-
-
-
-
-
-
-    # Once the GPS is installed, the mechanic dialogue at the 
-    # garage is not wanted (hide it.)
+    """
+    Return the dialogue choices visible at a given location.
+    
+    Filters out dialogue options that no longer make sense given the
+    game state. For example, the mechanic dialogue at the garage is
+    hidden once the GPS has been installed.
+    
+    Args:
+        location: A Location object from the graph.
+    
+    Returns:
+        Choice text strings available at this location.
+    """
     if location == garage and gps_installed:
         return []
     if location in (parade, destination, celebration):
@@ -234,19 +279,14 @@ def get_visible_choices(location):
 
 
 def draw_menu():
-
-
-
-
-
-
-
-
-
-
-
-    # Fill the screen with black and draw the button and text over it
-    # Occurs in each scene/screen
+    """
+    Draw the main menu screen with title and animated bike.
+    
+    Renders the game title, the Start Game button, and a player with a bike
+    that scrolls across the screen. The player position updates each
+    frame using the player_x_pos global, wrapping around when it
+    leaves the right edge.
+    """
     screen.fill((0, 0, 0))
     start_button.draw(screen)
     title_text = title_font.render(
@@ -261,6 +301,13 @@ def draw_menu():
 
 
 def draw_intro():
+    """
+    Draw the story introduction screen shown after Start Game.
+    
+    Displays the game title and a short narrative explaining that the
+    player's GPS has failed. Includes a Continue button that proceeds
+    to the first location screen when clicked.
+    """
     screen.fill((0, 0, 0))
     title_text = title_font.render(
         "Intergalactic Delivery", False, (255, 255, 255))
@@ -279,6 +326,16 @@ def draw_intro():
 
 
 def draw_location_screen():
+    """
+    Draw the main location view with description and action buttons.
+    
+    Shows the current location's name, its description, and any active
+    dialogue inside a bordered panel. Renders the action buttons
+    (Talk / Search and/or Choose Route) below the panel, plus the
+    inventory bar at the bottom.
+    
+    Uses globals: current_location, current_dialogue, action_buttons.
+    """
     screen.fill((0, 0, 0))
     title_text = title_font.render(
         current_location.name, False, (255, 255, 255))
@@ -310,6 +367,16 @@ def draw_location_screen():
 
 
 def draw_choice_screen():
+    """
+    Draw the dialogue choice screen at the current location.
+    
+    Displays the location description, any existing dialogue, a hint
+    line, and the list of dialogue choice buttons. The player clicks
+    a button to talk to that character or selects Back to return to
+    the location screen.
+    
+    Uses globals: current_location, current_dialogue, choice_buttons.
+    """
     screen.fill((0, 0, 0))
     title_text = title_font.render(
         current_location.name, False, (255, 255, 255))
@@ -342,6 +409,15 @@ def draw_choice_screen():
 
 
 def draw_route_screen():
+    """
+    Draw the route selection screen with travel buttons.
+    
+    Lists the visible routes from the current location as buttons. The
+    player clicks a button to travel there or selects Back to return
+    to the location screen.
+    
+    Uses globals: current_location, route_buttons.
+    """
     screen.fill((0, 0, 0))
     title_text = title_font.render(
         current_location.name, False, (255, 255, 255))
@@ -371,6 +447,16 @@ def draw_route_screen():
 
 
 def draw_shop_scene():
+    """
+    Draw the antique shop screen with item search interface.
+    
+    Renders the shop description, the shopkeeper's dialogue or last
+    search result, a text input box for typing item names, and the
+    Leave Shop button. The player types an item name and presses
+    Enter to run a linear search against the shop's inventory.
+    
+    Uses globals: shop, current_dialogue, shop_search_text.
+    """
     screen.fill((0, 0, 0))
 
     title_text = title_font.render("Shop", False, (255, 255, 255))
@@ -406,6 +492,17 @@ def draw_shop_scene():
 
 
 def draw_ending_screen(won):
+    """
+    Draw the final win or lose screen with the closing message.
+    
+    Shows a green "Congratulations!" title for wins, or a red
+    "Game Over" title for losses, followed by the end_message text
+    inside a bordered panel. A Play Again button below resets the
+    game state and returns to the main menu.
+    
+    Args:
+        won: True for the win screen, False for the lose screen.
+    """
     screen.fill((0, 0, 0))
     if won:
         title_text = title_font.render(
@@ -958,6 +1055,13 @@ def draw_licence_select():
  
  
 def draw_police_screen(): 
+    """
+    Draw the police checkpoint screen with scan button.
+    
+    Shows the police dialogue and the Scan Licence button. The
+    actual scan logic (Bloom filter check) runs in the main 
+    event loop when the button is clicked.
+    """
     screen.fill((0,0,0)) #Fill screen
  
     title_text = title_font.render("Police Checkpoint", False, (255, 255, 255))
@@ -975,6 +1079,7 @@ def draw_police_screen():
     scan_button.draw(screen)
 
 def travel_to_police(licence):
+    """Police screen that asks the user for their licence"""
     global current_screen, current_dialogue, player_licence
     player_licence = licence
     current_dialogue = (
@@ -1040,6 +1145,20 @@ scan_button = Button(300, 460, 200, 60, "Scan Licence")
 
 # Dynamic Button Builders
 def build_action_buttons(location):
+    """
+    Build the list of action buttons shown at a given location.
+    
+    Decides whether to show the Talk / Search button, the Choose Route
+    button, or both. If only one applies, a single centred button is
+    returned; if both apply, the static talk_button and travel_button
+    are used side by side.
+    
+    Args:
+        location: The current Location object.
+    
+    Returns:
+        list[Button]: The action buttons appropriate for this location.
+    """
     buttons = []
     has_choices = get_visible_choices(location)
     has_routes = get_visible_routes(location)
@@ -1055,6 +1174,19 @@ def build_action_buttons(location):
     return buttons
  
 def build_choice_buttons(location):
+    """
+    Build the list of dialogue choice buttons for a given location.
+    
+    Reads the visible choices for the location (filtered by
+    get_visible_choices) and creates a button for each, stacked
+    vertically and centred horizontally.
+    
+    Args:
+        location: The current Location object.
+    
+    Returns:
+        list[Button]: The choice buttons for this location.
+    """
     buttons = []
     choices = get_visible_choices(location)
     #Taking the choices and its index to arrange the buttons
@@ -1066,6 +1198,20 @@ def build_choice_buttons(location):
  
  
 def build_route_buttons(location):
+    """
+    Build the list of travel route buttons for a given location.
+    
+    Reads the visible routes for the location (filtered by
+    get_visible_routes) and creates a button for each, formatted as
+    "Go to (location name)". The buttons are stacked vertically and
+    centred horizontally.
+    
+    Args:
+        location: The current Location object.
+    
+    Returns:
+        list[Button]: The route buttons for this location.
+    """
     buttons = []
     routes = get_visible_routes(location)
 
@@ -1078,6 +1224,27 @@ def build_route_buttons(location):
  
  
 def travel_to(location):
+    """
+    Move the player to a new location and trigger associated events.
+    
+    Updates the current location, pushes the previous one onto the
+    movement history stack, and clears any active dialogue. Then handles
+    location specific logic:
+        - parade: triggers the boss battle
+        - shop: switches to the shop screen with item search
+        - garage (from shop with GPS): mechanic installs GPS
+        - garage (from shop without GPS): triggers the lose ending
+        - police: switches to the licence checkpoint screen
+        - destination: shows BFS path to celebration
+        - celebration: triggers the win ending
+    
+    Args:
+        location: The Location object to travel to.
+    
+    Side effects:
+        Modifies several globals: current_location, current_screen,
+        current_dialogue, gps_installed, end_message.
+    """
     global current_location, current_screen, current_dialogue
     global gps_installed, end_message
  
