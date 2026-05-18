@@ -33,6 +33,18 @@ def search(unordered_list, item):
 #this class represents the player's inventory and provides methods to add, remove, and check for items. It uses the search function to check if an item is in the inventory.
 
 class Inventory:
+    """
+    Represents the player's collected items during the game.
+
+    The inventory is implemented as a list because items can be added
+    and removed dynamically as the player progresses, and the data is
+    inherently unordered. Membership checks use the linear search 
+    function defined above.
+
+    Attributes:
+        items (list): The current list of item names held by the player.
+    
+    """
     def __init__(self):
         self.items = []
         
@@ -50,7 +62,35 @@ class Inventory:
 # Searching the system 
 
 def search_shop(shop_choices, item_wanted, player_inventory):
-   
+    """
+   Search the shop for a requested item and add it to the inventory.
+
+    Wraps the linear search algorithm with additional logic:
+        - Handles empty or whitespace-only input gracefully
+        - Performs a case-insensitive match so 'gps', 'GPS', and 'Gps'
+          all find the same item
+        - Tells the player what items are available if their search fails
+        - Prevents duplicate items from being added to the inventory
+
+    Args:
+        shop_choices: A Location object representing the shop.
+            Its `items` attribute is a dictionary mapping item names
+            to their descriptions.
+        item_wanted: The string the player typed into the search bar.
+        player_inventory: The player's Inventory object, modified
+            in-place if a match is found.
+
+    Returns:
+        str: A message to display to the player. Could be:
+            - A prompt to type a name (if input was empty)
+            - A "not found" message listing available items
+            - The item's description plus "You take the {item}" (success)
+            - The item's description plus "You already have {item}"
+              (if the item is a duplicate)
+
+   """
+
+
     # Handle empty input
     if not item_wanted or not item_wanted.strip():
         return "Type the name of an item to search for it."
@@ -84,5 +124,4 @@ def search_shop(shop_choices, item_wanted, player_inventory):
     player_inventory.add_item(offered_item)
     return f"{descriptions}\n\nYou take the {offered_item}."
     
-inventory = Inventory # The Graph.py imports inventory
 
