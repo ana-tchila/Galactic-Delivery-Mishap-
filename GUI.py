@@ -212,6 +212,20 @@ def draw_inventory_bar():
 
 
 def get_visible_routes(location):
+    """
+    Return the list of route names visible at a given location.
+    
+    Not all graph connections should be shown to the player. This function
+    filters the available routes based on the story flow and game state
+    (e.g. the police checkpoint is only visible at the garage after the
+    GPS has been installed by the mechanic).
+    
+    Args:
+        location: A Location object from the graph.
+    
+    Returns:
+         Names of locations the player can travel to from here
+    """
     if location == starting:
         return [garage.name, diner.name]
     elif location == diner:
@@ -229,6 +243,19 @@ def get_visible_routes(location):
 
 
 def get_visible_choices(location):
+    """
+    Return the dialogue choices visible at a given location.
+    
+    Filters out dialogue options that no longer make sense given the
+    game state. For example, the mechanic dialogue at the garage is
+    hidden once the GPS has been installed.
+    
+    Args:
+        location: A Location object from the graph.
+    
+    Returns:
+        Choice text strings available at this location.
+    """
     if location == garage and gps_installed:
         return []
     if location in (parade, destination, celebration):
@@ -237,6 +264,14 @@ def get_visible_choices(location):
 
 
 def draw_menu():
+    """
+    Draw the main menu screen with title and animated bike.
+    
+    Renders the game title, the Start Game button, and a player with a bike
+    that scrolls across the screen. The player position updates each
+    frame using the player_x_pos global, wrapping around when it
+    leaves the right edge.
+    """
     screen.fill((0, 0, 0))
     start_button.draw(screen)
     title_text = title_font.render(
@@ -251,6 +286,13 @@ def draw_menu():
 
 
 def draw_intro():
+    """
+    Draw the story introduction screen shown after Start Game.
+    
+    Displays the game title and a short narrative explaining that the
+    player's GPS has failed. Includes a Continue button that proceeds
+    to the first location screen when clicked.
+    """
     screen.fill((0, 0, 0))
     title_text = title_font.render(
         "Intergalactic Delivery", False, (255, 255, 255))
@@ -269,6 +311,16 @@ def draw_intro():
 
 
 def draw_location_screen():
+    """
+    Draw the main location view with description and action buttons.
+    
+    Shows the current location's name, its description, and any active
+    dialogue inside a bordered panel. Renders the action buttons
+    (Talk / Search and/or Choose Route) below the panel, plus the
+    inventory bar at the bottom.
+    
+    Uses globals: current_location, current_dialogue, action_buttons.
+    """
     screen.fill((0, 0, 0))
     title_text = title_font.render(
         current_location.name, False, (255, 255, 255))
@@ -297,6 +349,16 @@ def draw_location_screen():
 
 
 def draw_choice_screen():
+    """
+    Draw the dialogue choice screen at the current location.
+    
+    Displays the location description, any existing dialogue, a hint
+    line, and the list of dialogue choice buttons. The player clicks
+    a button to talk to that character or selects Back to return to
+    the location screen.
+    
+    Uses globals: current_location, current_dialogue, choice_buttons.
+    """
     screen.fill((0, 0, 0))
     title_text = title_font.render(
         current_location.name, False, (255, 255, 255))
@@ -329,6 +391,15 @@ def draw_choice_screen():
 
 
 def draw_route_screen():
+    """
+    Draw the route selection screen with travel buttons.
+    
+    Lists the visible routes from the current location as buttons. The
+    player clicks a button to travel there or selects Back to return
+    to the location screen.
+    
+    Uses globals: current_location, route_buttons.
+    """
     screen.fill((0, 0, 0))
     title_text = title_font.render(
         current_location.name, False, (255, 255, 255))
@@ -358,6 +429,16 @@ def draw_route_screen():
 
 
 def draw_shop_scene():
+    """
+    Draw the antique shop screen with item search interface.
+    
+    Renders the shop description, the shopkeeper's dialogue or last
+    search result, a text input box for typing item names, and the
+    Leave Shop button. The player types an item name and presses
+    Enter to run a linear search against the shop's inventory.
+    
+    Uses globals: shop, current_dialogue, shop_search_text.
+    """
     screen.fill((0, 0, 0))
 
     title_text = title_font.render("Shop", False, (255, 255, 255))
@@ -393,6 +474,17 @@ def draw_shop_scene():
 
 
 def draw_ending_screen(won):
+    """
+    Draw the final win or lose screen with the closing message.
+    
+    Shows a green "Congratulations!" title for wins, or a red
+    "Game Over" title for losses, followed by the end_message text
+    inside a bordered panel. A Play Again button below resets the
+    game state and returns to the main menu.
+    
+    Args:
+        won: True for the win screen, False for the lose screen.
+    """
     screen.fill((0, 0, 0))
     if won:
         title_text = title_font.render(
