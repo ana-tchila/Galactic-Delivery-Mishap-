@@ -22,17 +22,49 @@ pygame.mixer.music.load('sound/music.OGG')
 pygame.mixer.music.play(-1)
 running = True
 
-title_font = pygame.font.Font('font/Pixeltype.ttf', size=40)
-font = pygame.font.Font('font/Pixeltype.ttf', size=26)
-small_font = pygame.font.Font('font/Pixeltype.ttf', size=20)
-player = pygame.image.load('player/bike.png')
-smaller_player = pygame.transform.scale(player, (70, 70))
-player_x_pos = [0]
+#Error handling to ensure the file works if it didnt find a the costume font and the music file, if not it playes with no music and handles the image
+try:
+    pygame.mixer.music.load('sound/music.ogg')
+except pygame.error:
+    print("Music file not found, continuing without sound.")
+pygame.mixer.music.play(-1)
+running = True
+try:
+    title_font = pygame.font.Font('font/Pixeltype.ttf', size=40)
+    font = pygame.font.Font('font/Pixeltype.ttf', size=26)
+    small_font = pygame.font.Font('font/Pixeltype.ttf', size=20)
+except FileNotFoundError:
+    print("Custom font not found — falling back to default font.")
+    title_font = pygame.font.SysFont(None, 40)
+    font = pygame.font.SysFont(None, 26)
+    small_font = pygame.font.SysFont(None, 20)
+try:
+    player = pygame.image.load('player/bike.png')
+    smaller_player = pygame.transform.scale(player, (70, 70))
+except (pygame.error, FileNotFoundError):
+    # Fallback to a coloured rectangle if the image is missing
+    print("Player image not found — using fallback rectangle.")
+    smaller_player = pygame.Surface((70, 70))
+    smaller_player.fill((100, 200, 255))
 
+player_x_pos = [0]
 
 # the Button class represents interactive buttons in the GUI, with methods
 # to draw itself and check for clicks and hover states.
 class Button:
+    """
+    A clickable rectangular button with text label and hover effect.
+    Buttons store their position, dimensions, and label text. The class
+    provides methods to render the button, detect mouse clicks, and 
+    detect mouse hover (which changes the border colour).
+    
+    Attributes:
+        x (int): Top-left x coordinate of the button.
+        y (int): Top-left y coordinate of the button.
+        width (int): Width of the button in pixels.
+        height (int): Height of the button in pixels.
+        text (str): Text label displayed on the button.
+    """
     def __init__(self, x, y, width, height, text):
         self.x = x
         self.y = y
@@ -41,6 +73,16 @@ class Button:
         self.text = text
 
     def draw(self, surface):
+        """
+        Render the button on the given Pygame surface.
+        
+        The button is drawn with a white fill and a black text label.
+        The border changes colour when the mouse is hovering over it.
+        Long text uses a smaller font to fit within the button.
+        
+        Args:
+            surface: The Pygame surface to draw the button on.
+        """
         pygame.draw.rect(surface, (255, 255, 255),
                          (self.x, self.y, self.width, self.height))
         chosen_font = small_font if len(self.text) > 18 else font
@@ -58,14 +100,48 @@ class Button:
                              (self.x, self.y, self.width, self.height), 3)
 
     def is_clicked(self, pos):
+        """
+        Check if a position lies within the button's bounds.
+        
+        Args:
+            pos: A (x, y) tuple representing the mouse position.
+        
+        Returns:
+            True if pos is inside the button rectangle.
+        """
         return self.x <= pos[0] <= self.x + \
             self.width and self.y <= pos[1] <= self.y + self.height
 
     def is_hovered(self, pos):
+        """
+        Check if the mouse is hovering over the button.
+        
+        Currently identical to is_clicked since both check whether
+        the mouse position falls inside the button's bounds.
+        
+        Args:
+            pos: A (x, y) tuple representing the mouse position.
+        
+        Returns:
+            True if pos is inside the button rectangle.
+        """
         return self.is_clicked(pos)
 
 
 def wrap_text(text, font, max_width):
+    """
+    Wrap long text into multiple lines that fit within a maximum width,
+    as it splits the input text into words and groups them into lines based on
+    the rendered pixel width of the given font. 
+    
+    Args:
+        text: The input string to wrap.
+        font: The Pygame font object used to measure text width.
+        max_width: Maximum pixel width for each line.
+    
+    Returns:
+      A list of strings, each fitting within max_width.
+    """
     words = text.split(' ')
     lines = []
     for paragraph in str(text).split('\n'):
