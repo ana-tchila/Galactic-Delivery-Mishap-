@@ -1112,7 +1112,7 @@ while running:
                         )
  
                         # Let's the player pick the location 
-                        current_screen = "location" 
+                        current_screen = "destination_reached"
  
                     else: 
  
