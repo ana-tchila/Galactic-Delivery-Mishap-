@@ -22,17 +22,37 @@ pygame.mixer.music.load('sound/music.OGG')
 pygame.mixer.music.play(-1)
 running = True
 
-title_font = pygame.font.Font('font/Pixeltype.ttf', size=40)
-font = pygame.font.Font('font/Pixeltype.ttf', size=26)
-small_font = pygame.font.Font('font/Pixeltype.ttf', size=20)
-player = pygame.image.load('player/bike.png')
-smaller_player = pygame.transform.scale(player, (70, 70))
+#Error handling to ensure the file works if it didnt find a the costume font and the music file, if not it playes with no music and handles the image
+try:
+    pygame.mixer.music.load('sound/music.ogg')
+except pygame.error:
+    print("Music file not found, continuing without sound.")
+pygame.mixer.music.play(-1)
+running = True
+try:
+    title_font = pygame.font.Font('font/Pixeltype.ttf', size=40)
+    font = pygame.font.Font('font/Pixeltype.ttf', size=26)
+    small_font = pygame.font.Font('font/Pixeltype.ttf', size=20)
+except FileNotFoundError:
+    print("Custom font not found — falling back to default font.")
+    title_font = pygame.font.SysFont(None, 40)
+    font = pygame.font.SysFont(None, 26)
+    small_font = pygame.font.SysFont(None, 20)
+try:
+    player = pygame.image.load('player/bike.png')
+    smaller_player = pygame.transform.scale(player, (70, 70))
+except (pygame.error, FileNotFoundError):
+    # Fallback to a coloured rectangle if the image is missing
+    print("Player image not found — using fallback rectangle.")
+    smaller_player = pygame.Surface((70, 70))
+    smaller_player.fill((100, 200, 255))
+    
 player_x_pos = [0]
-
 
 # the Button class represents interactive buttons in the GUI, with methods
 # to draw itself and check for clicks and hover states.
 class Button:
+
     def __init__(self, x, y, width, height, text):
         self.x = x
         self.y = y
