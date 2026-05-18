@@ -101,5 +101,4 @@ def police_scan(licence):
     else: 
         return "Access denied"
  
- 
 #5740479
