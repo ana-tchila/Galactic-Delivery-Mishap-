@@ -218,7 +218,7 @@ if __name__ == "__main__": # for the GUI
 
 # Actual game loop 
     current_location = starting
-    movement_history = Stack() # Stack to keep track of the movement history 
+    movement_history = Stack()
     player_inventory = Inventory()
     player_licence = assign_player_licence()
 
