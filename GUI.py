@@ -1097,33 +1097,32 @@ while running:
  
             elif current_screen == "police": 
                 
-                #Checks if the scan button is clicked 
-                if scan_button.is_clicked(event.pos): 
-                    
-                    # Use the Bloom Filter instance
-                    result = police_scan(player_licence)
- 
-                    if result == "Let the driver pass": 
- 
-                        current_dialogue =(
-                            "POLICE CHECKPOINT\n" 
+                if scan_button.is_clicked(event.pos):
+
+                    if scan_button.text == "Scan Licence":
+                        result = police_scan(player_licence)
+
+                        if result == "Let the driver pass":
+                            current_dialogue = (
+                            "POLICE CHECKPOINT\n"
                             "Officer: Licence is valid\n"
-                            "Let driver pass.\n"
-                        )
- 
-                        # Let's the player pick the location 
-                        current_screen = "destination_reached"
- 
-                    else: 
- 
-                        end_message = ( 
+                            "Let driver pass.\n\n"
+                            "Click Continue."
+                            )
+                            scan_button.text = "Continue"
+
+                        else:
+                            end_message = (
                             "POLICE CHECKPOINT\n"
                             "Officer: Invalid licence\n"
                             "GAME OVER\n"
-                        )
+                            )
+                            current_screen = "ended_lose"
+
                         
-                        # Terminate the game 
-                        current_screen = "ended_lose"
+                    elif scan_button.text == "Continue":
+                        scan_button.text = "Scan Licence"
+                        travel_to(destination)
             
             elif current_screen == "find_boss":
                 door_buttons = draw_find_boss()
